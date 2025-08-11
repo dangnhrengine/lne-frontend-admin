@@ -1,0 +1,44 @@
+import React from 'react';
+import { useTranslations } from 'next-intl';
+
+interface ISpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+  className?: string;
+}
+
+export const Spinner: React.FC<ISpinnerProps> = ({
+  size = 'md',
+  text,
+  className = '',
+}) => {
+  const sizeClasses = {
+    sm: 'h-4 w-4',
+    md: 'h-8 w-8',
+    lg: 'h-12 w-12',
+  };
+
+  const spinnerClasses = `animate-spin rounded-full border-b-2 border-gray-900 mx-auto ${sizeClasses[size]}`;
+  const containerClasses = `text-center ${className}`.trim();
+
+  return (
+    <div className={containerClasses}>
+      <div className={spinnerClasses}></div>
+      {text && <p className="mt-2 text-gray-600">{text}</p>}
+    </div>
+  );
+};
+
+// Convenience component for full-screen loading
+export const FullScreenSpinner: React.FC<Omit<ISpinnerProps, 'className'>> = (props) => {
+  const t = useTranslations('common');
+  
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <Spinner 
+        {...props} 
+        text={props.text || t('loading')}
+      />
+    </div>
+  );
+}; 

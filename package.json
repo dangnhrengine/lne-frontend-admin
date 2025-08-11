@@ -1,0 +1,41 @@
+{
+  "name": "nextjs-reactquery",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "env:validate": "node -e \"require('./src/utils/env.ts').validateEnvVars()\""
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.29.2",
+    "axios": "^1.11.0",
+    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.537.0",
+    "next": "^15.4.5",
+    "next-intl": "^4.3.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.28.11",
+    "@types/node": "^24.2.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.32.0",
+    "eslint-config-next": "^15.4.5",
+    "postcss": "^8.5.6",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5"
+  }
+}

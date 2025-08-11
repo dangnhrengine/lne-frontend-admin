@@ -1,0 +1,138 @@
+{
+  "app": {
+    "name": "Lne",
+    "description": "Lne管理システム"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "notFound": "見つかりません",
+    "error": "エラーが発生しました",
+    "defaultUserName": "ユーザー",
+    "backToMembers": "会員一覧に戻る",
+    "pageNotFound": "お探しのページが見つかりませんでした。"
+  },
+  "navigation": {
+    "memberManagement": "会員一覧",
+    "memberRegistration": "会員アカウント登録",
+    "purchaseHistory": "購入履歴"
+  },
+  "header": {
+    "title": "Lne 管理画面",
+    "welcome": "ようこそ、{name}さん",
+    "login": "ログイン",
+    "logout": "ログアウト"
+  },
+  "footer": {
+    "title": "フッターはこちら"
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "adminId": "管理者ID",
+    "password": "パスワード",
+    "loginButton": "ログイン",
+    "loggingIn": "ログイン中...",
+    "loginSuccess": "ログインしました",
+    "loginError": "管理者ID、またはパスワードに誤りがあります。",
+    "adminIdPlaceholder": "admin",
+    "passwordPlaceholder": "任意のパスワード",
+    "adminIdRequired": "管理者IDは必須です",
+    "passwordRequired": "パスワードは必須です"
+  },
+  "pages": {
+    "members": {
+      "title": "会員一覧",
+      "description": "会員の一覧と管理機能です。",
+      "subtitle": "会員管理機能は開発中です。",
+      "placeholder": "会員一覧"
+    },
+    "memberRegistration": {
+      "title": "会員アカウント登録",
+      "description": "新しい会員アカウントを登録します。",
+      "subtitle": "会員登録機能は開発中です。",
+      "placeholder": "会員アカウント登録"
+    },
+    "purchaseHistory": {
+      "title": "購入履歴",
+      "description": "購入履歴の確認と管理機能です。",
+      "subtitle": "購入履歴機能は開発中です。",
+      "placeholder": "購入履歴"
+    }
+  },
+  "ui": {
+    "buttons": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "add": "追加",
+      "search": "検索",
+      "reset": "リセット",
+      "confirm": "確認",
+      "back": "戻る",
+      "next": "次へ",
+      "previous": "前へ",
+      "submit": "送信",
+      "close": "閉じる"
+    },
+    "form": {
+      "required": "必須",
+      "optional": "任意",
+      "invalid": "無効",
+      "valid": "有効",
+      "loading": "読み込み中...",
+      "success": "成功",
+      "error": "エラー"
+    },
+    "table": {
+      "noData": "データがありません",
+      "loading": "読み込み中...",
+      "itemsPerPage": "件表示",
+      "of": "の",
+      "showing": "表示中",
+      "entries": "件"
+    },
+    "modal": {
+      "confirm": "確認",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "delete": "削除",
+      "warning": "警告",
+      "info": "情報",
+      "success": "成功",
+      "error": "エラー"
+    }
+  },
+  "validation": {
+    "required": "{field}は必須です",
+    "minLength": "{field}は{min}文字以上で入力してください",
+    "maxLength": "{field}は{max}文字以下で入力してください",
+    "email": "有効なメールアドレスを入力してください",
+    "password": "パスワードは8文字以上で入力してください",
+    "confirmPassword": "パスワードが一致しません",
+    "numeric": "数値を入力してください",
+    "phone": "有効な電話番号を入力してください",
+    "url": "有効なURLを入力してください"
+  },
+  "messages": {
+    "success": {
+      "saved": "保存しました",
+      "deleted": "削除しました",
+      "updated": "更新しました",
+      "created": "作成しました"
+    },
+    "error": {
+      "general": "エラーが発生しました",
+      "network": "ネットワークエラーが発生しました",
+      "unauthorized": "認証が必要です",
+      "forbidden": "アクセスが拒否されました",
+      "notFound": "リソースが見つかりません",
+      "serverError": "サーバーエラーが発生しました"
+    },
+    "confirm": {
+      "delete": "本当に削除しますか？",
+      "logout": "ログアウトしますか？",
+      "discard": "変更を破棄しますか？"
+    }
+  }
+}
