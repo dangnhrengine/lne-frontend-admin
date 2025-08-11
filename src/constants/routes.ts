@@ -1,6 +1,6 @@
 export const ROUTES = {
-  MEMBERS: '/members',
+  MEMBERS: '/control',
   LOGIN: '/login',
-  MEMBER_REGISTRATION: '/members/register',
+  MEMBER_REGISTRATION: '/control/registration',
   PURCHASE_HISTORY: '/purchase-history',
 };
