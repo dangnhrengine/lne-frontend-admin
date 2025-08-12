@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { FormEvent, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { ProtectedRoute } from '@/components/auth';
@@ -44,11 +44,11 @@ export default function MemberRegistrationPage() {
       phoneCustomer: '',
       phoneLne: '',
       memberFee: '',
-      referrer: 'lne_hq',
+      referrer: 'Lne直販',
       lneManager: '',
       referralRate: '',
     },
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const years = useMemo(() => {
@@ -61,6 +61,34 @@ export default function MemberRegistrationPage() {
 
   const onSubmit = async (data: FormValues) => {
     console.log('submit payload', data);
+  };
+
+  const handleNumberInput = (
+    e: FormEvent<HTMLInputElement>,
+    isDecimal: boolean
+  ): string => {
+    const value = (e.target as HTMLInputElement).value;
+    let sanitizedValue = '';
+    if (isDecimal) {
+      // 1. Remove all text characters except number and dot
+      sanitizedValue = value.replace(/[^0-9.]/g, '');
+
+      // 2. Limit only 1 dot character
+      const parts = sanitizedValue.split('.');
+      if (parts.length > 2) {
+        sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
+      }
+
+      // 3. Limit 2 digits after dot character
+      const finalParts = sanitizedValue.split('.');
+      if (finalParts[1] && finalParts[1].length > 2) {
+        sanitizedValue = finalParts[0] + '.' + finalParts[1].substring(0, 2);
+      }
+    } else {
+      sanitizedValue = value.replace(/\D/g, '');
+    }
+
+    return sanitizedValue;
   };
 
   const inputBase =
@@ -176,7 +204,7 @@ export default function MemberRegistrationPage() {
                     <div className="flex flex-wrap items-center gap-3">
                       {/* 年 */}
                       <select
-                        className={`${inputBase} w-24`}
+                        className={`${inputBase} max-w-24`}
                         aria-label={t('form.birthdate.year')}
                         {...register('birthYear', {
                           required: t('form.birthdate.required'),
@@ -195,7 +223,7 @@ export default function MemberRegistrationPage() {
 
                       {/* 月 */}
                       <select
-                        className={`${inputBase} w-18`}
+                        className={`${inputBase} max-w-20`}
                         aria-label={t('form.birthdate.month')}
                         {...register('birthMonth', {
                           required: t('form.birthdate.required'),
@@ -214,7 +242,7 @@ export default function MemberRegistrationPage() {
 
                       {/* 日 */}
                       <select
-                        className={`${inputBase} w-18`}
+                        className={`${inputBase} max-w-20`}
                         aria-label={t('form.birthdate.day')}
                         {...register('birthDay', {
                           required: t('form.birthdate.required'),
@@ -305,11 +333,7 @@ export default function MemberRegistrationPage() {
                         },
                       })}
                       onInput={(e) => {
-                        const v = (e.target as HTMLInputElement).value.replace(
-                          /\D/g,
-                          ''
-                        );
-                        setValue('phoneCustomer', v, {
+                        setValue('phoneCustomer', handleNumberInput(e, false), {
                           shouldValidate: true,
                           shouldDirty: true,
                         });
@@ -349,11 +373,7 @@ export default function MemberRegistrationPage() {
                         },
                       })}
                       onInput={(e) => {
-                        const v = (e.target as HTMLInputElement).value.replace(
-                          /\D/g,
-                          ''
-                        );
-                        setValue('phoneLne', v, {
+                        setValue('phoneLne', handleNumberInput(e, false), {
                           shouldValidate: true,
                           shouldDirty: true,
                         });
@@ -381,13 +401,13 @@ export default function MemberRegistrationPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <input
-                        className={`${inputBase} w-24 text-right`}
-                        inputMode="numeric"
+                        className={`${inputBase} max-w-24 text-right`}
+                        inputMode="decimal"
                         placeholder=""
                         {...register('memberFee', {
                           required: t('form.memberFee.required'),
                           pattern: {
-                            value: /^\d+$/,
+                            value: /^\d+(\.\d{1,2})?$/,
                             message: t('form.memberFee.invalid'),
                           },
                           min: {
@@ -400,10 +420,7 @@ export default function MemberRegistrationPage() {
                           } as any,
                         })}
                         onInput={(e) => {
-                          const v = (
-                            e.target as HTMLInputElement
-                          ).value.replace(/\D/g, '');
-                          setValue('memberFee', v, {
+                          setValue('memberFee', handleNumberInput(e, true), {
                             shouldValidate: true,
                             shouldDirty: true,
                           });
@@ -431,17 +448,13 @@ export default function MemberRegistrationPage() {
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <select
+                    <input
                       className={`${inputBase} max-w-[250px]`}
+                      inputMode="text"
                       {...register('referrer', {
                         required: t('form.referrer.required'),
                       })}
-                    >
-                      <option value=""></option>
-                      <option value="lne_hq">
-                        {t('form.referrer.default')}
-                      </option>
-                    </select>
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
@@ -506,13 +519,13 @@ export default function MemberRegistrationPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <input
-                      className={`${inputBase} w-24 text-right`}
-                      inputMode="numeric"
+                      className={`${inputBase} max-w-24 text-right`}
+                      inputMode="decimal"
                       placeholder=""
                       {...register('referralRate', {
                         required: t('form.referralRate.required'),
                         pattern: {
-                          value: /^\d+$/,
+                          value: /^\d+(\.\d{1,2})?$/,
                           message: t('form.referralRate.invalid'),
                         },
                         min: {
@@ -525,11 +538,7 @@ export default function MemberRegistrationPage() {
                         } as any,
                       })}
                       onInput={(e) => {
-                        const v = (e.target as HTMLInputElement).value.replace(
-                          /\D/g,
-                          ''
-                        );
-                        setValue('referralRate', v, {
+                        setValue('referralRate', handleNumberInput(e, true), {
                           shouldValidate: true,
                           shouldDirty: true,
                         });
