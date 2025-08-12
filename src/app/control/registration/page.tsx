@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { ProtectedRoute } from '@/components/auth';
 import { Label, FieldError, Hint, FormButton } from '@/components/common/ui';
+import { useRegisterMemberMutation } from '@/api/members';
 
 type Gender = 'male' | 'female';
 
@@ -51,6 +52,8 @@ export default function MemberRegistrationPage() {
     mode: 'onChange',
   });
 
+  const { mutateAsync: registerMember } = useRegisterMemberMutation();
+
   const years = useMemo(() => {
     const arr: number[] = [];
     for (let y = 1900; y <= 2100; y++) arr.push(y);
@@ -61,6 +64,20 @@ export default function MemberRegistrationPage() {
 
   const onSubmit = async (data: FormValues) => {
     console.log('submit payload', data);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const payload = {
+      name: data.name,
+      gender: (data.gender || 'male') as 'male' | 'female',
+      birthDate: `${data.birthYear}-${pad(Number(data.birthMonth))}-${pad(Number(data.birthDay))}`,
+      email: data.email,
+      phoneCustomer: data.phoneCustomer,
+      phoneLne: data.phoneLne,
+      memberFeePercent: Number((data as any).memberFee || 0),
+      referrer: data.referrer,
+      lneManager: (data as any).lneManager || '',
+      referralRatePercent: Number((data as any).referralRate || 0),
+    };
+    await registerMember(payload);
   };
 
   const handleNumberInput = (
@@ -210,7 +227,6 @@ export default function MemberRegistrationPage() {
                           required: t('form.birthdate.required'),
                         })}
                       >
-                        <option value=""></option>
                         {years.map((y) => (
                           <option key={y} value={y}>
                             {y}
@@ -229,7 +245,6 @@ export default function MemberRegistrationPage() {
                           required: t('form.birthdate.required'),
                         })}
                       >
-                        <option value=""></option>
                         {months.map((m) => (
                           <option key={m} value={m}>
                             {m}
@@ -248,7 +263,6 @@ export default function MemberRegistrationPage() {
                           required: t('form.birthdate.required'),
                         })}
                       >
-                        <option value=""></option>
                         {days.map((d) => (
                           <option key={d} value={d}>
                             {d}
@@ -480,7 +494,6 @@ export default function MemberRegistrationPage() {
                         required: t('form.lneManager.required'),
                       })}
                     >
-                      <option value=""></option>
                       <option value="manager_a">
                         {t('form.lneManager.optionA')}
                       </option>
