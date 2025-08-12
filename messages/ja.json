@@ -50,7 +50,75 @@
       "title": "会員アカウント登録",
       "description": "新しい会員アカウントを登録します。",
       "subtitle": "会員登録機能は開発中です。",
-      "placeholder": "会員アカウント登録"
+      "placeholder": "会員アカウント登録",
+      "form": {
+        "sectionTitle": "会員情報",
+        "introSectionTitle": "紹介情報",
+        "required": "必須",
+        "name": {
+          "label": "氏名",
+          "max": "全角50文字",
+          "required": "入力必須項目です"
+        },
+        "gender": {
+          "label": "性別",
+          "male": "男性",
+          "female": "女性",
+          "required": "入力必須項目です"
+        },
+        "birthdate": {
+          "label": "生年月日",
+          "year": "年",
+          "month": "月",
+          "day": "日",
+          "hint": "年プルダウン：1,900年〜2,100年",
+          "required": "入力必須項目です"
+        },
+        "email": {
+          "label": "メールアドレス",
+          "hint": "例）user@example.com",
+          "required": "入力必須項目です",
+          "invalid": "有効なメールアドレスを入力してください",
+          "maxLength": "半角200文字、有効メールアドレス判定"
+        },
+        "phoneCustomer": {
+          "label": "電話番号（顧客）",
+          "hint": "ハイフンなし、数字のみ",
+          "required": "入力必須項目です",
+          "invalid": "有効な電話番号を入力してください"
+        },
+        "phoneLne": {
+          "label": "電話番号（Lne）",
+          "hint": "ハイフンなし、数字のみ",
+          "required": "入力必須項目です",
+          "invalid": "有効な電話番号を入力してください"
+        },
+        "memberFee": {
+          "label": "会員料率",
+          "hint": "数字のみ、小数点第2位まで",
+          "required": "入力必須項目です",
+          "invalid": "0〜100の整数で入力してください"
+        },
+        "referrer": {
+          "label": "紹介者",
+          "default": "Lne本部",
+          "hint": "会員ID、または会員氏名を入力するとサジェストが表示されます",
+          "required": "入力必須項目です"
+        },
+        "lneManager": {
+          "label": "Lne担当",
+          "optionA": "担当者A",
+          "optionB": "担当者B",
+          "hint": "ブランド内の担当者から選択します",
+          "required": "入力必須項目です"
+        },
+        "referralRate": {
+          "label": "紹介料率",
+          "hint": "デフォルト：10%。数字のみ、少数不可",
+          "required": "入力必須項目です",
+          "invalid": "0〜100の整数で入力してください"
+        }
+      }
     },
     "purchaseHistory": {
       "title": "購入履歴",
