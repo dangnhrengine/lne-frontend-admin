@@ -1,58 +1,126 @@
 'use client';
 
-import React, { FormEvent, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
+import { getErrorMessage, isApiError } from '@/api/lib/errorHandler';
+import { useRegisterMemberMutation } from '@/api/members/register';
 import { ProtectedRoute } from '@/components/auth';
-import { Label, FieldError, Hint, FormButton } from '@/components/common/ui';
-import { useRegisterMemberMutation } from '@/api/members';
+import {
+  Alert,
+  ErrorMessage,
+  FormButton,
+  FormInput,
+  FormRadio,
+  FormSelect,
+  Hint,
+  Label,
+} from '@/components/common/ui';
+import { logError } from '@/utils';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useTranslations } from 'next-intl';
+import { FormEvent, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
 
 type Gender = 'male' | 'female';
 
 type FormValues = {
   name: string;
-  gender: Gender | '';
+  gender: Gender;
   birthYear: string;
   birthMonth: string;
   birthDay: string;
   email: string;
-  phoneCustomer: string;
-  phoneLne: string;
-  memberFee: string;
-  referrer: string;
-  lneManager: string;
-  referralRate: string;
+  customPhone: string;
+  lnePhone: string;
+  membershipFeeRate: string;
+  referrerLoginId: string;
+  lnePersonId: string;
+  introducedFeeRate: string;
 };
 
 export default function MemberRegistrationPage() {
   const t = useTranslations('pages.memberRegistration');
   const tBtn = useTranslations('ui.buttons');
   const tCommon = useTranslations('common');
+  const tMessages = useTranslations('messages');
+
+  const emailRegex = new RegExp(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+
+  const schema = yup.object({
+    name: yup
+      .string()
+      .required(t('form.name.required'))
+      .max(50, t('form.name.max')),
+    gender: yup
+      .mixed<Gender>()
+      .oneOf(['male', 'female'], t('form.gender.required'))
+      .required(t('form.gender.required')),
+    birthYear: yup.string().required(t('form.birthdate.required')),
+    birthMonth: yup.string().required(t('form.birthdate.required')),
+    birthDay: yup.string().required(t('form.birthdate.required')),
+    email: yup
+      .string()
+      .required(t('form.email.required'))
+      .max(200, t('form.email.maxLength'))
+      .matches(emailRegex, t('form.email.invalid')),
+    customPhone: yup
+      .string()
+      .required(t('form.customPhone.required'))
+      .matches(/^\d+$/, t('form.customPhone.invalid'))
+      .max(13, t('form.customPhone.max')),
+    lnePhone: yup
+      .string()
+      .required(t('form.lnePhone.required'))
+      .matches(/^\d+$/, t('form.lnePhone.invalid'))
+      .max(13, t('form.customPhone.max')),
+    membershipFeeRate: yup
+      .string()
+      .required(t('form.membershipFeeRate.required'))
+      .matches(/^\d+(\.\d{1,2})?$/, t('form.membershipFeeRate.invalid'))
+      .test('range', t('form.membershipFeeRate.invalid'), (v) => {
+        const n = Number(v);
+        return v !== '' && !Number.isNaN(n) && n >= 0 && n <= 100;
+      }),
+    referrerLoginId: yup.string().required(t('form.referrerLoginId.required')),
+    lnePersonId: yup.string().required(t('form.lnePersonId.required')),
+    introducedFeeRate: yup
+      .string()
+      .required(t('form.introducedFeeRate.required'))
+      .matches(/^\d+(\.\d{1,2})?$/, t('form.introducedFeeRate.invalid'))
+      .test('range', t('form.introducedFeeRate.invalid'), (v) => {
+        const n = Number(v);
+        return v !== '' && !Number.isNaN(n) && n >= 0 && n <= 100;
+      }),
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    control,
   } = useForm<FormValues>({
     defaultValues: {
       name: '',
-      gender: '',
+      gender: 'male',
       birthYear: '',
       birthMonth: '',
       birthDay: '',
       email: '',
-      phoneCustomer: '',
-      phoneLne: '',
-      memberFee: '',
-      referrer: 'Lne直販',
-      lneManager: '',
-      referralRate: '',
+      customPhone: '',
+      lnePhone: '',
+      membershipFeeRate: '',
+      referrerLoginId: 'Lne直販',
+      lnePersonId: '',
+      introducedFeeRate: '',
     },
     mode: 'onChange',
+    resolver: yupResolver(schema),
   });
 
   const { mutateAsync: registerMember } = useRegisterMemberMutation();
+  const [generalError, setGeneralError] = useState<string | undefined>();
 
   const years = useMemo(() => {
     const arr: number[] = [];
@@ -63,21 +131,52 @@ export default function MemberRegistrationPage() {
   const days = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
   const onSubmit = async (data: FormValues) => {
-    console.log('submit payload', data);
+    setGeneralError(undefined);
     const pad = (n: number) => String(n).padStart(2, '0');
     const payload = {
       name: data.name,
-      gender: (data.gender || 'male') as 'male' | 'female',
+      gender: data.gender,
       birthDate: `${data.birthYear}-${pad(Number(data.birthMonth))}-${pad(Number(data.birthDay))}`,
       email: data.email,
-      phoneCustomer: data.phoneCustomer,
-      phoneLne: data.phoneLne,
-      memberFeePercent: Number((data as any).memberFee || 0),
-      referrer: data.referrer,
-      lneManager: (data as any).lneManager || '',
-      referralRatePercent: Number((data as any).referralRate || 0),
+      customPhone: data.customPhone,
+      lnePhone: data.lnePhone,
+      membershipFeeRate: Number((data as any).membershipFeeRate || 0),
+      referrerLoginId: data.referrerLoginId,
+      lnePersonId: (data as any).lnePersonId || '',
+      introducedFeeRate: Number((data as any).introducedFeeRate || 0),
     };
-    await registerMember(payload);
+
+    try {
+      await registerMember(payload);
+      // TODO: success handling (e.g., notification or navigation)
+    } catch (error) {
+      logError('Register member failed:', error as unknown);
+
+      if (isApiError(error)) {
+        const err = error as any;
+        const dataResp = err.data as {
+          code?: string;
+          errors?: any;
+          message?: string;
+        };
+        const msg = getErrorMessage(error);
+
+        if (dataResp?.code === 'RESOURCE_CONFLICT' && msg.includes('email')) {
+          setGeneralError(t('form.email.conflict'));
+        } else if (dataResp?.code === 'NOT_FOUND' && msg.includes('Referrer')) {
+          setGeneralError(t('form.referrerLoginId.notFound'));
+        } else if (
+          dataResp?.code === 'NOT_FOUND' &&
+          msg.includes('LnePerson')
+        ) {
+          setGeneralError(t('form.lnePersonId.notFound'));
+        } else {
+          setGeneralError(tMessages('error.general'));
+        }
+      } else {
+        setGeneralError(tMessages('error.general'));
+      }
+    }
   };
 
   const handleNumberInput = (
@@ -125,6 +224,17 @@ export default function MemberRegistrationPage() {
           <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
         </div>
 
+        {generalError && (
+          <div className="mb-4">
+            <Alert
+              variant="error"
+              dismissible
+              onClose={() => setGeneralError(undefined)}
+            >
+              {generalError}
+            </Alert>
+          </div>
+        )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-lg bg-white px-18 py-10 shadow">
             {/* Section title */}
@@ -137,7 +247,7 @@ export default function MemberRegistrationPage() {
             <div className="flex flex-col gap-6">
               {/* 氏名 */}
               <div className="flex flex-col gap-2">
-                {/* Row chính - Label và Input */}
+                {/* Row Label and Input */}
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
@@ -145,22 +255,29 @@ export default function MemberRegistrationPage() {
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <input
-                      className={`${inputBase} max-w-[250px]`}
-                      {...register('name', {
-                        required: t('form.name.required'),
-                        maxLength: { value: 50, message: t('form.name.max') },
-                      })}
+                    <Controller
+                      name="name"
+                      control={control}
+                      render={({ field }) => (
+                        <FormInput
+                          id="name"
+                          label=""
+                          className="max-w-[250px]"
+                          {...field}
+                        />
+                      )}
                     />
                   </div>
                 </div>
 
-                {/* Row error - Div trống và Error */}
+                {/* Row error - Empty Div and Error */}
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>{' '}
-                  {/* Div trống để giữ khoảng cách */}
                   <div className="flex-1">
-                    <FieldError error={errors.name?.message} />
+                    <ErrorMessage
+                      message={errors.name?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -174,36 +291,30 @@ export default function MemberRegistrationPage() {
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-8">
-                      <label className="inline-flex items-center gap-2 text-gray-900">
-                        <input
-                          type="radio"
-                          value="male"
-                          {...register('gender', {
-                            required: t('form.gender.required'),
-                          })}
-                          className="h-4 w-4"
+                    <Controller
+                      name="gender"
+                      control={control}
+                      render={({ field }) => (
+                        <FormRadio
+                          id="gender"
+                          label=""
+                          options={[
+                            { value: 'male', label: t('form.gender.male') },
+                            { value: 'female', label: t('form.gender.female') },
+                          ]}
+                          {...field}
                         />
-                        {t('form.gender.male')}
-                      </label>
-                      <label className="inline-flex items-center gap-2 text-gray-900">
-                        <input
-                          type="radio"
-                          value="female"
-                          {...register('gender', {
-                            required: t('form.gender.required'),
-                          })}
-                          className="h-4 w-4"
-                        />
-                        {t('form.gender.female')}
-                      </label>
-                    </div>
+                      )}
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.gender?.message} />
+                    <ErrorMessage
+                      message={errors.gender?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -220,55 +331,76 @@ export default function MemberRegistrationPage() {
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3">
                       {/* 年 */}
-                      <select
-                        className={`${inputBase} max-w-24`}
-                        aria-label={t('form.birthdate.year')}
-                        {...register('birthYear', {
-                          required: t('form.birthdate.required'),
-                        })}
-                      >
-                        {years.map((y) => (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="birthYear"
+                        control={control}
+                        render={({ field }) => (
+                          <FormSelect
+                            id="birthYear"
+                            label=""
+                            className="max-w-24"
+                            aria-label={t('form.birthdate.year')}
+                            options={[
+                              { value: '', label: '—' },
+                              ...years.map((y) => ({
+                                value: String(y),
+                                label: y,
+                              })),
+                            ]}
+                            {...field}
+                          />
+                        )}
+                      />
                       <span className="text-gray-900">
                         {t('form.birthdate.year')}
                       </span>
 
                       {/* 月 */}
-                      <select
-                        className={`${inputBase} max-w-20`}
-                        aria-label={t('form.birthdate.month')}
-                        {...register('birthMonth', {
-                          required: t('form.birthdate.required'),
-                        })}
-                      >
-                        {months.map((m) => (
-                          <option key={m} value={m}>
-                            {m}
-                          </option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="birthMonth"
+                        control={control}
+                        render={({ field }) => (
+                          <FormSelect
+                            id="birthMonth"
+                            label=""
+                            className="max-w-20"
+                            aria-label={t('form.birthdate.month')}
+                            options={[
+                              { value: '', label: '—' },
+                              ...months.map((m) => ({
+                                value: String(m),
+                                label: m,
+                              })),
+                            ]}
+                            {...field}
+                          />
+                        )}
+                      />
                       <span className="text-gray-900">
                         {t('form.birthdate.month')}
                       </span>
 
                       {/* 日 */}
-                      <select
-                        className={`${inputBase} max-w-20`}
-                        aria-label={t('form.birthdate.day')}
-                        {...register('birthDay', {
-                          required: t('form.birthdate.required'),
-                        })}
-                      >
-                        {days.map((d) => (
-                          <option key={d} value={d}>
-                            {d}
-                          </option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="birthDay"
+                        control={control}
+                        render={({ field }) => (
+                          <FormSelect
+                            id="birthDay"
+                            label=""
+                            className="max-w-20"
+                            aria-label={t('form.birthdate.day')}
+                            options={[
+                              { value: '', label: '—' },
+                              ...days.map((d) => ({
+                                value: String(d),
+                                label: d,
+                              })),
+                            ]}
+                            {...field}
+                          />
+                        )}
+                      />
                       <span className="text-gray-900">
                         {t('form.birthdate.day')}
                       </span>
@@ -278,12 +410,13 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError
-                      error={
+                    <ErrorMessage
+                      message={
                         errors.birthYear?.message ||
                         errors.birthMonth?.message ||
                         errors.birthDay?.message
                       }
+                      className="font-bold"
                     />
                   </div>
                 </div>
@@ -298,20 +431,18 @@ export default function MemberRegistrationPage() {
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <input
-                      className={`${inputBase} max-w-[500px]`}
-                      inputMode="email"
-                      {...register('email', {
-                        required: t('form.email.required'),
-                        maxLength: {
-                          value: 200,
-                          message: t('form.email.maxLength'),
-                        },
-                        pattern: {
-                          value: /^\S+@\S+\.\S+$/,
-                          message: t('form.email.invalid'),
-                        },
-                      })}
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => (
+                        <FormInput
+                          id="email"
+                          label=""
+                          className="max-w-[500px]"
+                          inputMode="email"
+                          {...field}
+                        />
+                      )}
                     />
                     <Hint>{t('form.email.hint')}</Hint>
                   </div>
@@ -319,7 +450,10 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.email?.message} />
+                    <ErrorMessage
+                      message={errors.email?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -329,37 +463,38 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
-                      {t('form.phoneCustomer.label')} <RequiredBadge />
+                      {t('form.customPhone.label')} <RequiredBadge />
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <input
-                      className={`${inputBase} max-w-[280px]`}
-                      inputMode="numeric"
-                      placeholder=""
-                      {...register('phoneCustomer', {
-                        required: t('form.phoneCustomer.required'),
-                        minLength: { value: 10, message: '10〜13桁' },
-                        maxLength: { value: 13, message: '10〜13桁' },
-                        pattern: {
-                          value: /^\d+$/,
-                          message: t('form.phoneCustomer.invalid'),
-                        },
-                      })}
-                      onInput={(e) => {
-                        setValue('phoneCustomer', handleNumberInput(e, false), {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        });
-                      }}
+                    <Controller
+                      name="customPhone"
+                      control={control}
+                      render={({ field }) => (
+                        <FormInput
+                          id="customPhone"
+                          label=""
+                          className="max-w-[280px]"
+                          inputMode="numeric"
+                          placeholder=""
+                          {...field}
+                          onChange={(e) => {
+                            const v = handleNumberInput(e, false);
+                            field.onChange(v);
+                          }}
+                        />
+                      )}
                     />
-                    <Hint>{t('form.phoneCustomer.hint')}</Hint>
+                    <Hint>{t('form.customPhone.hint')}</Hint>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.phoneCustomer?.message} />
+                    <ErrorMessage
+                      message={errors.customPhone?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -369,37 +504,38 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
-                      {t('form.phoneLne.label')} <RequiredBadge />
+                      {t('form.lnePhone.label')} <RequiredBadge />
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <input
-                      className={`${inputBase} max-w-[280px]`}
-                      inputMode="numeric"
-                      placeholder=""
-                      {...register('phoneLne', {
-                        required: t('form.phoneLne.required'),
-                        minLength: { value: 10, message: '10〜13桁' },
-                        maxLength: { value: 13, message: '10〜13桁' },
-                        pattern: {
-                          value: /^\d+$/,
-                          message: t('form.phoneLne.invalid'),
-                        },
-                      })}
-                      onInput={(e) => {
-                        setValue('phoneLne', handleNumberInput(e, false), {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        });
-                      }}
+                    <Controller
+                      name="lnePhone"
+                      control={control}
+                      render={({ field }) => (
+                        <FormInput
+                          id="lnePhone"
+                          label=""
+                          className="max-w-[280px]"
+                          inputMode="numeric"
+                          placeholder=""
+                          {...field}
+                          onChange={(e) => {
+                            const v = handleNumberInput(e, false);
+                            field.onChange(v);
+                          }}
+                        />
+                      )}
                     />
-                    <Hint>{t('form.phoneLne.hint')}</Hint>
+                    <Hint>{t('form.lnePhone.hint')}</Hint>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.phoneLne?.message} />
+                    <ErrorMessage
+                      message={errors.lnePhone?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -409,46 +545,41 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
-                      {t('form.memberFee.label')} <RequiredBadge />
+                      {t('form.membershipFeeRate.label')} <RequiredBadge />
                     </Label>
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <input
-                        className={`${inputBase} max-w-24 text-right`}
-                        inputMode="decimal"
-                        placeholder=""
-                        {...register('memberFee', {
-                          required: t('form.memberFee.required'),
-                          pattern: {
-                            value: /^\d+(\.\d{1,2})?$/,
-                            message: t('form.memberFee.invalid'),
-                          },
-                          min: {
-                            value: 0,
-                            message: t('form.memberFee.invalid'),
-                          } as any,
-                          max: {
-                            value: 100,
-                            message: t('form.memberFee.invalid'),
-                          } as any,
-                        })}
-                        onInput={(e) => {
-                          setValue('memberFee', handleNumberInput(e, true), {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          });
-                        }}
+                      <Controller
+                        name="membershipFeeRate"
+                        control={control}
+                        render={({ field }) => (
+                          <FormInput
+                            id="membershipFeeRate"
+                            label=""
+                            className="max-w-24 text-right"
+                            inputMode="decimal"
+                            placeholder=""
+                            {...field}
+                            onChange={(e) => {
+                              const v = handleNumberInput(e, true);
+                              field.onChange(v);
+                            }}
+                          />
+                        )}
                       />
                       <span className="text-sm text-gray-900">%</span>
                     </div>
-                    <Hint>{t('form.memberFee.hint')}</Hint>
+                    <Hint>{t('form.membershipFeeRate.hint')}</Hint>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.memberFee?.message} />
+                    <ErrorMessage
+                      message={errors.membershipFeeRate?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -458,15 +589,15 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
-                      {t('form.referrer.label')} <RequiredBadge />
+                      {t('form.referrerLoginId.label')} <RequiredBadge />
                     </Label>
                   </div>
                   <div className="flex-1">
                     <input
                       className={`${inputBase} max-w-[250px]`}
                       inputMode="text"
-                      {...register('referrer', {
-                        required: t('form.referrer.required'),
+                      {...register('referrerLoginId', {
+                        required: t('form.referrerLoginId.required'),
                       })}
                     />
                   </div>
@@ -474,7 +605,10 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.referrer?.message} />
+                    <ErrorMessage
+                      message={errors.referrerLoginId?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -484,29 +618,42 @@ export default function MemberRegistrationPage() {
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
                   <div className="shrink-0 md:w-56">
                     <Label className="text-gray-900">
-                      {t('form.lneManager.label')} <RequiredBadge />
+                      {t('form.lnePersonId.label')} <RequiredBadge />
                     </Label>
                   </div>
                   <div className="flex-1">
-                    <select
-                      className={`${inputBase} max-w-[250px]`}
-                      {...register('lneManager', {
-                        required: t('form.lneManager.required'),
-                      })}
-                    >
-                      <option value="manager_a">
-                        {t('form.lneManager.optionA')}
-                      </option>
-                      <option value="manager_b">
-                        {t('form.lneManager.optionB')}
-                      </option>
-                    </select>
+                    <Controller
+                      name="lnePersonId"
+                      control={control}
+                      render={({ field }) => (
+                        <FormSelect
+                          id="lnePersonId"
+                          label=""
+                          className="max-w-[250px]"
+                          options={[
+                            { value: '', label: '—' },
+                            {
+                              value: '5db300ad-6ca9-4980-b0fc-16051d7e2ad8',
+                              label: 'LNE担当 A',
+                            },
+                            {
+                              value: '0158ce3c-c464-4b9f-8613-aa753d5817d7',
+                              label: 'LNE担当 B',
+                            },
+                          ]}
+                          {...field}
+                        />
+                      )}
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                   <div className="shrink-0 md:w-56"></div>
                   <div className="flex-1">
-                    <FieldError error={errors.lneManager?.message} />
+                    <ErrorMessage
+                      message={errors.lnePersonId?.message}
+                      className="font-bold"
+                    />
                   </div>
                 </div>
               </div>
@@ -523,43 +670,46 @@ export default function MemberRegistrationPage() {
 
             <div className="flex flex-col gap-6">
               {/* 紹介料率（%） */}
-              <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
-                <div className="shrink-0 md:w-56">
-                  <Label className="text-gray-900">
-                    {t('form.referralRate.label')} <RequiredBadge />
-                  </Label>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <input
-                      className={`${inputBase} max-w-24 text-right`}
-                      inputMode="decimal"
-                      placeholder=""
-                      {...register('referralRate', {
-                        required: t('form.referralRate.required'),
-                        pattern: {
-                          value: /^\d+(\.\d{1,2})?$/,
-                          message: t('form.referralRate.invalid'),
-                        },
-                        min: {
-                          value: 0,
-                          message: t('form.referralRate.invalid'),
-                        } as any,
-                        max: {
-                          value: 100,
-                          message: t('form.referralRate.invalid'),
-                        } as any,
-                      })}
-                      onInput={(e) => {
-                        setValue('referralRate', handleNumberInput(e, true), {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        });
-                      }}
-                    />
-                    <span className="text-sm text-gray-900">%</span>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-8">
+                  <div className="shrink-0 md:w-56">
+                    <Label className="text-gray-900">
+                      {t('form.introducedFeeRate.label')} <RequiredBadge />
+                    </Label>
                   </div>
-                  <FieldError error={errors.referralRate?.message} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <Controller
+                        name="introducedFeeRate"
+                        control={control}
+                        render={({ field }) => (
+                          <FormInput
+                            id="introducedFeeRate"
+                            label=""
+                            className="max-w-24 text-right"
+                            inputMode="decimal"
+                            placeholder=""
+                            {...field}
+                            onChange={(e) => {
+                              const v = handleNumberInput(e, true);
+                              field.onChange(v);
+                            }}
+                          />
+                        )}
+                      />
+                      <span className="text-sm text-gray-900">%</span>
+                    </div>
+                    <Hint>{t('form.introducedFeeRate.hint')}</Hint>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 md:flex-row md:gap-8">
+                  <div className="shrink-0 md:w-56"></div>
+                  <div className="flex-1">
+                    <ErrorMessage
+                      message={errors.introducedFeeRate?.message}
+                      className="font-bold"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

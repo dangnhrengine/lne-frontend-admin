@@ -57,7 +57,7 @@
         "required": "必須",
         "name": {
           "label": "氏名",
-          "max": "全角50文字",
+          "max": "氏名は50文字以内で入力してください",
           "required": "入力必須項目です"
         },
         "gender": {
@@ -79,42 +79,45 @@
           "hint": "例）user@example.com",
           "required": "入力必須項目です",
           "invalid": "有効なメールアドレスを入力してください",
-          "maxLength": "半角200文字、有効メールアドレス判定"
+          "maxLength": "メールアドレスは200文字以内で入力してください",
+          "conflict": "「メールアドレス」のメンバーは既に存在します。"
         },
-        "phoneCustomer": {
+        "customPhone": {
           "label": "電話番号（顧客）",
           "hint": "ハイフンなし、数字のみ",
           "required": "入力必須項目です",
-          "invalid": "有効な電話番号を入力してください"
+          "invalid": "有効な電話番号を入力してください",
+          "max": "最大13桁の数字で入力してください"
         },
-        "phoneLne": {
+        "lnePhone": {
           "label": "電話番号（Lne）",
           "hint": "ハイフンなし、数字のみ",
           "required": "入力必須項目です",
-          "invalid": "有効な電話番号を入力してください"
+          "invalid": "有効な電話番号を入力してください",
+          "max": "最大13桁の数字で入力してください"
         },
-        "memberFee": {
+        "membershipFeeRate": {
           "label": "会員料率",
           "hint": "数字のみ、小数点第2位まで",
           "required": "入力必須項目です",
           "invalid": "0〜100の整数で入力してください"
         },
-        "referrer": {
+        "referrerLoginId": {
           "label": "紹介者",
           "default": "Lne本部",
           "hint": "会員ID、または会員氏名を入力するとサジェストが表示されます",
-          "required": "入力必須項目です"
+          "required": "入力必須項目です",
+          "notFound": "「紹介者」が見つかりませんでした"
         },
-        "lneManager": {
+        "lnePersonId": {
           "label": "Lne担当",
-          "optionA": "担当者A",
-          "optionB": "担当者B",
           "hint": "ブランド内の担当者から選択します",
-          "required": "入力必須項目です"
+          "required": "入力必須項目です",
+          "notFound": "「Lne担当」が見つかりませんでした"
         },
-        "referralRate": {
+        "introducedFeeRate": {
           "label": "紹介料率",
-          "hint": "デフォルト：10%。数字のみ、少数不可",
+          "hint": "数字のみ、小数点第2位まで",
           "required": "入力必須項目です",
           "invalid": "0〜100の整数で入力してください"
         }
