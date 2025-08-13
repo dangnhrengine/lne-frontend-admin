@@ -44,7 +44,8 @@
       "title": "会員一覧",
       "description": "会員の一覧と管理機能です。",
       "subtitle": "会員管理機能は開発中です。",
-      "placeholder": "会員一覧"
+      "placeholder": "会員一覧",
+      "export-csv-button": "<small>現在の検索結果を</small>CSV出力する"
     },
     "memberRegistration": {
       "title": "会員アカウント登録",
@@ -112,7 +113,8 @@
     "confirmPassword": "パスワードが一致しません",
     "numeric": "数値を入力してください",
     "phone": "有効な電話番号を入力してください",
-    "url": "有効なURLを入力してください"
+    "url": "有効なURLを入力してください",
+    "required-field": "この項目は必須です"
   },
   "messages": {
     "success": {

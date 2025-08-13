@@ -60,6 +60,9 @@ module.exports = {
         xl: '12px',
         '2xl': '16px',
       },
+      screens: {
+        'standard': '1440px',
+      },
     },
   },
   plugins: [],
