@@ -1,0 +1,3 @@
+.flatpickr-calendar .flatpickr-current-month {
+  @apply !flex !flex-row-reverse !items-center !justify-between px-6;
+}

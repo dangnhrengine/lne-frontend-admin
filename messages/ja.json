@@ -45,7 +45,23 @@
       "description": "会員の一覧と管理機能です。",
       "subtitle": "会員管理機能は開発中です。",
       "placeholder": "会員一覧",
-      "export-csv-button": "<small>現在の検索結果を</small>CSV出力する"
+      "export-csv-button": "<small>現在の検索結果を</small>CSV出力する",
+      "filter-members-form": {
+        "loginId": "会員ID",
+        "name": "氏名",
+        "lnePhone": "電話番号（Lne）",
+        "transactionsNumber": "取引回数",
+        "referrer": "紹介者",
+        "joiningDate": "入会日",
+        "lnePerson": "Lne担当者",
+        "archive": "アーカイブ",
+        "archiveDescription": "アーカイブ（削除）を含む",
+        "status": "ステータス",
+        "status-valid": "有効",
+        "status-invalid": "一時停止",
+        "reset": "リセット",
+        "submit": "検索する"
+      }
     },
     "memberRegistration": {
       "title": "会員アカウント登録",
@@ -102,6 +118,9 @@
       "info": "情報",
       "success": "成功",
       "error": "エラー"
+    },
+    "select": {
+      "noOptions": "オプションなし"
     }
   },
   "validation": {
@@ -114,7 +133,7 @@
     "numeric": "数値を入力してください",
     "phone": "有効な電話番号を入力してください",
     "url": "有効なURLを入力してください",
-    "required-field": "この項目は必須です"
+    "requiredField": "この項目は必須です"
   },
   "messages": {
     "success": {
