@@ -1,5 +1,4 @@
 import { FormItemContext } from '@/hooks/useFormField';
-import { cn } from '@/utils';
 import React from 'react';
 
 export const FormItem = React.forwardRef<
@@ -10,7 +9,9 @@ export const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('py-3', className)} {...props} />
+      <div ref={ref} className={className} {...props} />
     </FormItemContext.Provider>
   );
 });
+
+FormItem.displayName = 'FormItem';

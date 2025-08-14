@@ -8,8 +8,36 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .font-noto {
     font-family: 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@layer components {
+  .radio-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .radio-wrapper input {
+    @apply hidden;
+  }
+
+  .radio-wrapper .radio-btn {
+    display: inline-block;
+    transition: all 0.3s ease;
+    @apply -mb-1 size-5 rounded-full border border-gray-200 bg-gray-50 p-1;
+  }
+
+  .radio-wrapper input:checked + .radio-btn {
+    @apply border-4 bg-gray-900;
   }
 }

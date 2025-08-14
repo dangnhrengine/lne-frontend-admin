@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/auth';
 import { Button } from '@/components/common/ui';
 import { ArrowDownToLine } from 'lucide-react';
 import FilterMembersForm from './_components/filter-members-form';
+import { TableDemo } from './_components/MemberList';
 
 export default function MembersPage() {
   const t = useTranslations('pages.members');
@@ -18,7 +19,9 @@ export default function MembersPage() {
           <Button size="lg" className="gap-x-2 font-semibold">
             <div className="flex items-center gap-x-1">
               {t.rich('export-csv-button', {
-                small: (chunks) => <span className="text-sm">{chunks}</span>,
+                small: (chunks) => (
+                  <span className="text-sm max-md:hidden">{chunks}</span>
+                ),
               })}
             </div>
             <ArrowDownToLine />
@@ -27,6 +30,7 @@ export default function MembersPage() {
 
         <FilterMembersForm />
       </div>
+      <TableDemo />
     </ProtectedRoute>
   );
 }

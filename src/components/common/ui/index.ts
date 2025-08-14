@@ -13,5 +13,12 @@ export { FormItem } from './FormItem';
 export { FormControl } from './FormControl';
 export { FormField } from './FormField';
 export { FormMessage } from './FormMessage';
+export { Checkbox } from './CheckBox';
+export { FormRadio } from './FormRadio';
+export { Alert } from './Alert';
+export { DatePicker } from './DatePicker';
+export { CreatableSelect } from './CreatableSelect';
+export { Table } from './Table';
+export { Pagination } from './Pagination';
 
 export * from './types';
