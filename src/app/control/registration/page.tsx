@@ -1,35 +1,84 @@
 'use client';
 
-import React from 'react';
-import { useTranslations } from 'next-intl';
+import { getErrorMessage, isApiError } from '@/api/lib/errorHandler';
+import { useRegisterMemberMutation } from '@/api/members/register';
 import { ProtectedRoute } from '@/components/auth';
+import MemberForm, { MemberFormValues } from '@/components/members/MemberForm';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { logError } from '@/utils';
 
 export default function MemberRegistrationPage() {
   const t = useTranslations('pages.memberRegistration');
+  const tBtn = useTranslations('ui.buttons');
+  const tCommon = useTranslations('common');
+  const tMessages = useTranslations('messages');
+
+  const { mutateAsync: registerMember } = useRegisterMemberMutation();
+  const [generalError, setGeneralError] = useState<string | undefined>();
+
+  const onSubmit = async (data: MemberFormValues) => {
+    setGeneralError(undefined);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const payload = {
+      name: data.name,
+      gender: data.gender,
+      birthDate: `${data.birthYear}-${pad(Number(data.birthMonth))}-${pad(Number(data.birthDay))}`,
+      email: data.email,
+      customPhone: data.customPhone,
+      lnePhone: data.lnePhone,
+      membershipFeeRate: Number((data as any).membershipFeeRate || 0),
+      referrerLoginId: data.referrerLoginId,
+      lnePersonId: (data as any).lnePersonId || '',
+      introducedFeeRate: Number((data as any).introducedFeeRate || 0),
+    };
+
+    try {
+      await registerMember(payload);
+      // TODO: success handling (e.g., notification or navigation)
+    } catch (error) {
+      logError('Register member failed:', error as unknown);
+
+      if (isApiError(error)) {
+        const err = error as any;
+        const dataResp = err.data as {
+          code?: string;
+          errors?: any;
+          message?: string;
+        };
+        const msg = getErrorMessage(error);
+
+        if (dataResp?.code === 'RESOURCE_CONFLICT' && msg.includes('email')) {
+          setGeneralError(t('form.email.conflict'));
+        } else if (dataResp?.code === 'NOT_FOUND' && msg.includes('Referrer')) {
+          setGeneralError(t('form.referrerLoginId.notFound'));
+        } else if (
+          dataResp?.code === 'NOT_FOUND' &&
+          msg.includes('LnePerson')
+        ) {
+          setGeneralError(t('form.lnePersonId.notFound'));
+        } else {
+          setGeneralError(tMessages('error.general'));
+        }
+      } else {
+        setGeneralError(tMessages('error.general'));
+      }
+    }
+  };
 
   return (
     <ProtectedRoute requireAuth={true}>
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {t('title')}
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {t('description')}
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('placeholder')}</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              {t('subtitle')}
-            </p>
-          </div>
-        </div>
+        <MemberForm
+          onSubmit={onSubmit}
+          submitLabel={tBtn('save')}
+          backHref="/control"
+          backLabel={tCommon('backToMembers')}
+          generalError={generalError}
+        />
       </div>
     </ProtectedRoute>
   );
