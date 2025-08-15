@@ -3,4 +3,5 @@ export const ROUTES = {
   LOGIN: '/login',
   MEMBER_REGISTRATION: '/control/registration',
   PURCHASE_HISTORY: '/purchase-history',
+  EDIT_MEMBER: '/control/edit/:id',
 };

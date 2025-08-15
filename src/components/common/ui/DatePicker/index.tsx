@@ -9,6 +9,7 @@ import Flatpickr, {
   OptionsType,
 } from 'react-flatpickr';
 import './style.css';
+import { Calendar } from 'lucide-react';
 
 interface DatePickerProps extends DateTimePickerProps {
   label?: string;
@@ -118,9 +119,9 @@ export const DatePicker = memo(
               ref={ref}
               {...props}
             />
-            {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <Calendar className="h-4 w-4 text-gray-400" />
-            </div> */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <Calendar className="size-4 text-gray-400" />
+            </div>
           </div>
         </div>
       );

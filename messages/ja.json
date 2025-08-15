@@ -46,23 +46,37 @@
       "subtitle": "会員管理機能は開発中です。",
       "placeholder": "会員一覧",
       "export-csv-button": "<small>現在の検索結果を</small>CSV出力する",
-      "filter-members-form": {
-        "loginId": "会員ID",
-        "name": "氏名",
-        "lnePhone": "電話番号（Lne）",
-        "transactionsNumber": "取引回数",
-        "referrer": "紹介者",
-        "joiningDate": "入会日",
-        "lnePerson": "Lne担当者",
-        "archive": "アーカイブ",
-        "archiveDescription": "アーカイブ（削除）を含む",
-        "status": "ステータス",
-        "status-valid": "有効",
-        "status-invalid": "一時停止",
-        "reset": "リセット",
-        "submit": "検索する"
-      }
-    },
+      "loginId": "会員ID",
+      "name": "氏名",
+      "lnePhone": "電話番号（Lne）",
+      "transactionsNumber": "取引回数",
+      "referrer": "紹介者",
+      "joiningDate": "入会日",
+      "lnePerson": "Lne担当者",
+      "archive": "アーカイブ",
+      "archiveDescription": "アーカイブ（削除）を含む",
+      "status": "ステータス",
+      "status-valid": "有効",
+      "status-invalid": "一時停止",
+      "reset": "リセット",
+      "submit": "検索する",
+      "membershipFeeRate": "会員料率",
+      "transactionsDate": "取引回数 / \n 最終取引年月日",
+      "referrerDate": "紹介者 / \n 入会日",
+      "introducedFeeRate": "紹介料率",
+      "delete": "削除",
+      "edit": "編集",
+      "lneReferrer": "Lne直販",
+      "change": "変更",
+      "status-valid-message": "「{name}のステータスを有効にしました」",
+      "status-invalid-message": "「{name}のステータスを有効にしました」",
+      "archive-member-message": "「{name}をアーカイブ（削除）しました」",
+      "unarchive-member-message": "「{name}が復元されました」",
+      "archive-member-title": "会員をアーカイブ（削除）しますか？",
+      "archive-member-description": "アーカイブすると、会員はログインできなくなります。\n元の情報は削除され、あとで管理者が復元できます。\nよろしければ「はい」を選択して、アーカイブを開始してください。",
+      "unarchive-member-title": "会員を復元しますか？",
+      "unarchive-member-description": "復元すると、会員はログイン可能できるようになります。\nよろしければ「はい」を選択して、復元を開始してください" 
+       },
     "memberRegistration": {
       "title": "会員アカウント登録",
       "description": "新しい会員アカウントを登録します。",
@@ -107,7 +121,8 @@
       "itemsPerPage": "件表示",
       "of": "の",
       "showing": "表示中",
-      "entries": "件"
+      "entries": "件",
+      "totalItems": "全{total}件中　{from}～{to}件"
     },
     "modal": {
       "confirm": "確認",
@@ -117,7 +132,9 @@
       "warning": "警告",
       "info": "情報",
       "success": "成功",
-      "error": "エラー"
+      "error": "エラー",
+      "no": "いいえ",
+      "yes": "はい"
     },
     "select": {
       "noOptions": "オプションなし"

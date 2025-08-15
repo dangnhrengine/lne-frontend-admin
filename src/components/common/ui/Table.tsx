@@ -1,11 +1,19 @@
+import { OrderBy } from '@/api/common';
+import { Spinner } from '@/components/common/ui/';
+import { cn } from '@/utils';
+import { useTranslations } from 'next-intl';
+import { useCallback } from 'react';
+
 // Types
 export interface Column<T> {
   key: keyof T | string;
   title: string;
   width?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render?: (value: any, record: T, index: number) => React.ReactNode;
   sortable?: boolean;
   align?: 'left' | 'center' | 'right';
+  className?: string;
 }
 
 export interface TableProps<T> {
@@ -14,12 +22,12 @@ export interface TableProps<T> {
   loading?: boolean;
   rowKey: keyof T | ((record: T) => string);
   className?: string;
-  onSort?: (field: string, order: 'asc' | 'desc') => void;
+  onSort?: (field: keyof T, order: OrderBy) => void;
   sortField?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: OrderBy;
 }
 
-export const Table = <T extends Record<string, any>>({
+export const Table = <T,>({
   data,
   columns,
   loading = false,
@@ -29,36 +37,17 @@ export const Table = <T extends Record<string, any>>({
   sortField,
   sortOrder,
 }: TableProps<T>) => {
-  // Get row key
-  const getRowKey = (record: T, index: number): string => {
-    if (typeof rowKey === 'function') {
-      return rowKey(record);
-    }
-    return String(record[rowKey] || index);
-  };
+  const t = useTranslations('ui.table');
 
-  // Handle sort
-  const handleSort = (field: string) => {
-    if (!onSort) return;
-
-    if (sortField === field) {
-      onSort(field, sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      onSort(field, 'asc');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div
-        className={`rounded-lg border border-gray-200 bg-white ${className}`}
-      >
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-gray-500">読み込み中...</div>
-        </div>
-      </div>
-    );
-  }
+  const getRowKey = useCallback(
+    (record: T, index: number): string => {
+      if (typeof rowKey === 'function') {
+        return rowKey(record);
+      }
+      return String(record[rowKey] || index);
+    },
+    [rowKey]
+  );
 
   return (
     <div
@@ -66,77 +55,95 @@ export const Table = <T extends Record<string, any>>({
     >
       <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 overflow-x-auto">
         <table className="w-full min-w-max">
-          <thead className="border-b border-gray-200 bg-gray-50">
+          <thead className="border-b border-gray-100 bg-primary-100">
             <tr>
               {columns.map((column, index) => (
                 <th
                   key={String(column.key) || index}
-                  className={`whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-700 ${
-                    column.align === 'center'
-                      ? 'text-center'
-                      : column.align === 'right'
-                        ? 'text-right'
-                        : 'text-left'
-                  } ${column.sortable ? 'cursor-pointer select-none hover:bg-gray-100' : ''} transition-colors`}
+                  className={cn(
+                    `whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 transition-colors`,
+                    {
+                      'cursor-pointer select-none hover:bg-gray-100':
+                        column.sortable,
+                    },
+                    column?.className
+                  )}
                   style={{
                     width: column.width,
                     minWidth: column.width || '120px', // Ensure minimum width
                   }}
                   onClick={() =>
-                    column.sortable && handleSort(String(column.key))
+                    column.sortable &&
+                    onSort?.(
+                      column.key as keyof T,
+                      sortOrder === 'ASC' ? 'DESC' : 'ASC'
+                    )
                   }
                 >
-                  <div className="flex items-center space-x-1">
-                    <span>{column.title}</span>
+                  <p
+                    className="space-x-1"
+                    style={{ textAlign: column.align || 'center' }}
+                  >
+                    {column.title}
                     {column.sortable && sortField === column.key && (
                       <span className="text-blue-500">
-                        {sortOrder === 'asc' ? '↑' : '↓'}
+                        {sortOrder === 'ASC' ? '↑' : '↓'}
                       </span>
                     )}
-                  </div>
+                  </p>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {data.map((record, index) => (
-              <tr
-                key={getRowKey(record, index)}
-                className="transition-colors hover:bg-gray-50"
-              >
-                {columns.map((column, colIndex) => {
-                  const value = record[column.key as keyof T];
-                  const cellContent = column.render
-                    ? column.render(value, record, index)
-                    : String(value || '');
-
-                  return (
-                    <td
-                      key={colIndex}
-                      className={`whitespace-nowrap px-4 py-3 text-sm text-gray-900 ${
-                        column.align === 'center'
-                          ? 'text-center'
-                          : column.align === 'right'
-                            ? 'text-right'
-                            : 'text-left'
-                      }`}
-                      style={{ minWidth: column.width || '120px' }}
-                    >
-                      {cellContent}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-            {data.length === 0 && (
+          <tbody className="divide-y divide-gray-100">
+            {loading ? (
               <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
-                  データがありません
+                <td colSpan={columns.length} className="px-4 py-6 text-center">
+                  <div className="flex-center">
+                    <Spinner />
+                  </div>
                 </td>
               </tr>
+            ) : (
+              <>
+                {data.map((record, index) => (
+                  <tr
+                    key={getRowKey(record, index)}
+                    className="transition-colors hover:bg-gray-50"
+                  >
+                    {columns.map((column, colIndex) => {
+                      const value = record[column.key as keyof T];
+                      const cellContent = column.render
+                        ? column.render(value, record, index)
+                        : String(value || '');
+
+                      return (
+                        <td
+                          key={colIndex}
+                          className={`whitespace-nowrap px-4 py-6 text-sm text-gray-900`}
+                          style={{
+                            minWidth: column.width || '120px',
+                            textAlign: column.align || 'center',
+                          }}
+                        >
+                          {cellContent}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+
+                {data.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={columns.length}
+                      className="px-4 py-8 text-center text-gray-500"
+                    >
+                      {t('noData')}
+                    </td>
+                  </tr>
+                )}
+              </>
             )}
           </tbody>
         </table>
