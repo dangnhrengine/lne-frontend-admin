@@ -8,7 +8,7 @@ export interface IMember extends IBase {
   customPhone: string;
   lnePhone: string;
   membershipFeeRate: number;
-  referrerLoginId: string;
+  referrerLoginId: string | null;
   introducedFeeRate: number;
   lnePersonId: string;
 }

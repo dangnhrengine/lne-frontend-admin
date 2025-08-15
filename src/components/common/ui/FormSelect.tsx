@@ -7,7 +7,7 @@ type Option = {
 
 interface IFormSelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label: string;
+  label?: string;
   isLoading?: boolean;
   options: Option[];
 }
@@ -30,9 +30,11 @@ export const FormSelect: React.FC<IFormSelectProps> = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-900">
-        {label}
-      </label>
+      {label !== '' && (
+        <label htmlFor={id} className="block text-sm font-medium text-gray-900">
+          {label}
+        </label>
+      )}
       <select
         id={id}
         disabled={isLoading}

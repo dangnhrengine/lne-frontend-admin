@@ -101,7 +101,9 @@ export const Alert: React.FC<AlertProps> = ({
   }, [variant]);
 
   useEffect(() => {
-    if (!autoCloseMs) return;
+    if (!autoCloseMs) {
+      return;
+    }
     const id = setTimeout(() => {
       setOpen(false);
       onClose?.();
@@ -109,7 +111,9 @@ export const Alert: React.FC<AlertProps> = ({
     return () => clearTimeout(id);
   }, [autoCloseMs, onClose]);
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <div

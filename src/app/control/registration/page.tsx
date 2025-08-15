@@ -3,10 +3,11 @@
 import { getErrorMessage, isApiError } from '@/api/lib/errorHandler';
 import { useRegisterMemberMutation } from '@/api/members/register';
 import { ProtectedRoute } from '@/components/auth';
-import MemberForm, { MemberFormValues } from '@/components/members/MemberForm';
+import { MemberForm } from '@/components/member/MemberForm';
+import { MemberRegistrationFormData } from '@/components/member/MemberForm/form-schema';
+import { logError } from '@/utils';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { logError } from '@/utils';
 
 export default function MemberRegistrationPage() {
   const t = useTranslations('pages.memberRegistration');
@@ -17,7 +18,7 @@ export default function MemberRegistrationPage() {
   const { mutateAsync: registerMember } = useRegisterMemberMutation();
   const [generalError, setGeneralError] = useState<string | undefined>();
 
-  const onSubmit = async (data: MemberFormValues) => {
+  const onSubmit = async (data: MemberRegistrationFormData) => {
     setGeneralError(undefined);
     const pad = (n: number) => String(n).padStart(2, '0');
     const payload = {
@@ -27,10 +28,11 @@ export default function MemberRegistrationPage() {
       email: data.email,
       customPhone: data.customPhone,
       lnePhone: data.lnePhone,
-      membershipFeeRate: Number((data as any).membershipFeeRate || 0),
-      referrerLoginId: data.referrerLoginId,
-      lnePersonId: (data as any).lnePersonId || '',
-      introducedFeeRate: Number((data as any).introducedFeeRate || 0),
+      membershipFeeRate: Number(data.membershipFeeRate || 0),
+      referrerLoginId:
+        data.referrerLoginId === 'Lne直販' ? null : data.referrerLoginId,
+      lnePersonId: data.lnePersonId,
+      introducedFeeRate: Number(data.introducedFeeRate || 0),
     };
 
     try {

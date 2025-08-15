@@ -35,29 +35,39 @@ export const FormRadio: React.FC<IFormRadioProps> = ({
         </label>
       )}
       <div className="flex items-center gap-8">
-        {options.map((opt) => (
-          <label
-            key={opt.value}
-            className="inline-flex items-center gap-2 text-gray-900"
-          >
-            <input
-              type="radio"
-              id={id ? `${id}-${opt.value}` : undefined}
-              name={name}
-              value={opt.value}
-              checked={value === opt.value}
-              onChange={(e) => {
-                onChange?.(e);
-                onValueChange?.(opt.value);
-              }}
-              disabled={isLoading}
-              className={`h-4 w-4 ${className}`}
-              {...rest}
-            />
-            {opt.label}
-          </label>
-        ))}
+        {options.map((opt, index) => {
+          const inputId = id ? `${id}-${opt.value}` : `radio-${index}`;
+          return (
+            <div
+              key={opt.value}
+              className="inline-flex items-center gap-2 text-gray-900"
+            >
+              <div className="radio-wrapper">
+                <input
+                  type="radio"
+                  id={inputId}
+                  name={name}
+                  value={opt.value}
+                  checked={value === opt.value}
+                  onChange={(e) => {
+                    onChange?.(e);
+                    onValueChange?.(opt.value);
+                  }}
+                  disabled={isLoading}
+                  {...rest}
+                  className={className}
+                />
+                <label className="radio-btn" htmlFor={inputId} />
+              </div>
+              <label className="radio-btn" htmlFor={inputId}>
+                {opt.label}
+              </label>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
+
+FormRadio.displayName = 'FormRadio';

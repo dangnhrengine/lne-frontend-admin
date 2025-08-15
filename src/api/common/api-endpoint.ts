@@ -1,8 +1,8 @@
 export const API_ENDPOINT = {
   AUTH: {
-    LOGIN: '/admin/auth/login',
+    LOGIN: '/auth/login',
   },
   MEMBERS: {
-    REGISTER: '/admin/members/register'
+    REGISTER: '/members/register'
   }
 };
