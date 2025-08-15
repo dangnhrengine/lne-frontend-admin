@@ -1,3 +1,4 @@
+import { useGetLnePersonsQuery } from '@/api/lne-persons';
 import {
   Button,
   Checkbox,
@@ -11,6 +12,7 @@ import {
   FormMessage,
   FormRadio,
 } from '@/components/common/ui';
+import { Option } from '@/components/common/ui/CreatableSelect';
 import useFormSchemaWithTranslation from '@/hooks/useFormSchemaWithTranslation';
 import { MEMBER_STATUS } from '@/types/members';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,14 +20,27 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FilterMemberFormData, filterMemberFormSchema } from './form-schema';
-import Flatpickr, {
-  DateTimePickerHandle,
-  DateTimePickerProps,
-  OptionsType,
-} from 'react-flatpickr';
-export default function FilterMembersForm() {
-  const t = useTranslations('pages.members.filter-members-form');
+
+export default function FilterMembersForm({
+  onSubmitFilters,
+}: {
+  onSubmitFilters: (filter: FilterMemberFormData) => void;
+}) {
+  const t = useTranslations('pages.members');
   const formSchema = useFormSchemaWithTranslation(filterMemberFormSchema);
+
+  const { data: lnePersons, isLoading: isLoadingLnePersons } =
+    useGetLnePersonsQuery();
+
+  const lnePersonsOptions = useMemo(() => {
+    return (
+      lnePersons?.map((lnePerson) => ({
+        label: lnePerson.name,
+        value: lnePerson.name || '',
+        id: lnePerson.id || '',
+      })) || []
+    );
+  }, [lnePersons]);
 
   const statusOptions = useMemo(() => {
     return Object.values(MEMBER_STATUS).map((status) => ({
@@ -68,9 +83,12 @@ export default function FilterMembersForm() {
     []
   );
 
-  const onSubmit = useCallback(async (data: FilterMemberFormData) => {
-    console.log('Form data:', data);
-  }, []);
+  const onSubmit = useCallback(
+    async (data: FilterMemberFormData) => {
+      onSubmitFilters(data);
+    },
+    [onSubmitFilters]
+  );
 
   return (
     <div className="flex w-full flex-col gap-y-6 rounded-md bg-white p-6 shadow">
@@ -167,7 +185,7 @@ export default function FilterMembersForm() {
                       }}
                       ref={field.ref}
                       onChange={(dates) => {
-                        field.onChange(dates[0]); // Add this line
+                        field.onChange(dates[0]);
                       }}
                     />
                   </FormControl>
@@ -200,10 +218,15 @@ export default function FilterMembersForm() {
                 <FormItem className={formItemClasses}>
                   <FormControl>
                     <CreatableSelect
-                      label={t('lnePerson')}
                       {...field}
-                      options={[]}
-                      onChange={field.onChange}
+                      valueField="id"
+                      isSearchable
+                      label={t('lnePerson')}
+                      loading={isLoadingLnePersons}
+                      options={lnePersonsOptions}
+                      onChange={(option) => {
+                        field.onChange((option as Option)?.id);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

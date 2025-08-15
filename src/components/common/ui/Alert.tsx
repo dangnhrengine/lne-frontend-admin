@@ -1,10 +1,11 @@
 // src/components/common/ui/Alert.tsx
-import React, { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/utils/helpers';
+import React, { useEffect, useMemo } from 'react';
 
 type AlertVariant = 'info' | 'warning' | 'error';
 
-type AlertProps = {
+export type AlertProps = {
+  open: boolean;
   variant?: AlertVariant;
   title?: string;
   children?: React.ReactNode;
@@ -66,6 +67,7 @@ const VariantIcon: React.FC<{ variant: AlertVariant }> = ({ variant }) => {
 };
 
 export const Alert: React.FC<AlertProps> = ({
+  open,
   variant = 'info',
   title,
   children,
@@ -76,8 +78,6 @@ export const Alert: React.FC<AlertProps> = ({
   icon,
   role = 'alert',
 }) => {
-  const [open, setOpen] = useState(true);
-
   const styles = useMemo(() => {
     switch (variant) {
       case 'error':
@@ -105,7 +105,6 @@ export const Alert: React.FC<AlertProps> = ({
       return;
     }
     const id = setTimeout(() => {
-      setOpen(false);
       onClose?.();
     }, autoCloseMs);
     return () => clearTimeout(id);
@@ -139,7 +138,6 @@ export const Alert: React.FC<AlertProps> = ({
             styles.close
           )}
           onClick={() => {
-            setOpen(false);
             onClose?.();
           }}
         >

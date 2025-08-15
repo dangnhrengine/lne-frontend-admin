@@ -1,4 +1,5 @@
-import { FC, memo, ReactNode, useCallback } from 'react';
+import { cn } from '@/utils/helpers';
+import { FC, memo, ReactNode, useCallback, useMemo } from 'react';
 import {
   ActionMeta,
   components,
@@ -12,21 +13,23 @@ import {
 import ReactCreatableSelect, { CreatableProps } from 'react-select/creatable';
 import { useTranslations } from 'use-intl';
 import { Label } from './Label';
-import { Spinner } from './Spinner';
+import { LoadingSpinner } from './Spinner';
 
 export interface Option {
   value: string;
   label: string;
-  [key: string]: string | number | boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface NoOptionsMessageProps {
   inputValue: string;
-  [key: string]: string | number | boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface CreatableSelectProps
-  extends CreatableProps<Option, true, GroupBase<Option>> {
+  extends Omit<CreatableProps<Option, true, GroupBase<Option>>, 'value'> {
   label?: string;
   isMulti?: true;
   loading?: boolean;
@@ -35,12 +38,13 @@ export interface CreatableSelectProps
   isSearchable?: boolean;
   defaultValues?: MultiValue<Option>;
   closeMenuOnSelect?: boolean;
-  value?: MultiValue<Option>;
+  value?: Option['value'] | Option['value'][];
   placeholder?: string;
   className?: string;
   isHiddenCreateNewOption?: boolean;
+  valueField?: keyof Option;
   onChange: (
-    options: MultiValue<Option>,
+    option: MultiValue<Option> | Option,
     actionMeta: ActionMeta<Option>
   ) => void;
   onCreateOption?: (v: string) => void;
@@ -48,10 +52,10 @@ export interface CreatableSelectProps
   noOptionsMessage?: (props: NoOptionsMessageProps) => ReactNode;
 }
 
-const NoOptionsMessage: React.FC = () => {
+const NoOptionsMessage: React.FC<{ className?: string }> = ({ className }) => {
   const t = useTranslations('ui.select');
   return (
-    <div className="pointer-events-none">
+    <div className={cn('pointer-events-none', className)}>
       <p className="text-center text-sm text-gray-500">{t('noOptions')}</p>
     </div>
   );
@@ -65,30 +69,7 @@ const borderColor = '#e5e7eb';
 const borderColorFocused = '#d1d5db';
 const fontSize = '1rem';
 const lineHeight = '1.25rem';
-const minHeight = '3rem';
-
-const optionStyle = (
-  styles: CSSObjectWithLabel,
-  props: OptionProps<Option, true, GroupBase<Option>>,
-  isHiddenCreateNewOption: boolean
-) => {
-  const { isFocused } = props;
-
-  return {
-    ...styles,
-    backgroundColor:
-      isFocused && !isHiddenCreateNewOption
-        ? backgroundColor
-        : 'transparent !important',
-    color: textColor,
-    ':hover': {
-      backgroundColor: isHiddenCreateNewOption
-        ? 'transparent !important'
-        : '#FAFAFC !important',
-      cursor: isHiddenCreateNewOption ? 'default' : 'pointer',
-    },
-  };
-};
+const minHeight = '44px';
 
 export const colorStyles: StylesConfig<Option, true> = {
   control: (styles, { isDisabled }) => ({
@@ -102,7 +83,8 @@ export const colorStyles: StylesConfig<Option, true> = {
     lineHeight,
     minHeight,
     boxShadow: 'none !important',
-    borderRadius: '8px',
+    borderRadius: '6px',
+    height: '44px !important',
   }),
   menu: (base) => ({
     ...base,
@@ -134,7 +116,7 @@ export const colorStyles: StylesConfig<Option, true> = {
   singleValue: (styles, { isDisabled }) => ({
     ...styles,
     color: isDisabled ? textColorDisabled : textColor,
-    backgroundColor: 'red !important',
+    backgroundColor: 'transparent !important',
   }),
 };
 
@@ -175,9 +157,68 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
     components,
     styles,
     isHiddenCreateNewOption = true,
+    valueField = 'value',
     ...props
   }) => {
-    const defaultNoOptionsMessage = useCallback(() => <NoOptionsMessage />, []);
+    const currentValue = useMemo(() => {
+      if (Array.isArray(value)) {
+        return options?.filter((option) => value.includes(option[valueField]));
+      }
+      return options?.find((option) => option.value === value);
+    }, [value, options, valueField]);
+
+    const defaultNoOptionsMessage = useCallback(
+      (className?: string) => <NoOptionsMessage className={className} />,
+      []
+    );
+
+    const optionStyle = useCallback(
+      (
+        styles: CSSObjectWithLabel,
+        props: OptionProps<Option, true, GroupBase<Option>>
+      ) => {
+        const { isFocused, data } = props;
+
+        const isNewOption = data?.__isNew__;
+        const isNotMatchOption = !options?.find((option) =>
+          option?.value.includes(data.value)
+        );
+
+        const optionStyles = {
+          ...styles,
+          backgroundColor:
+            isFocused && !isHiddenCreateNewOption
+              ? backgroundColor
+              : 'transparent !important',
+          color: textColor,
+          ':hover': {
+            backgroundColor: isNotMatchOption
+              ? 'transparent !important'
+              : '#FAFAFC !important',
+            cursor: isNotMatchOption ? 'default' : 'pointer',
+          },
+          display: isNewOption
+            ? isNotMatchOption
+              ? 'block'
+              : 'none'
+            : 'block',
+        };
+        return optionStyles;
+      },
+      [options, isHiddenCreateNewOption]
+    );
+
+    const memoizedStyles = useMemo(
+      () => ({
+        option: (
+          styles: CSSObjectWithLabel,
+          props: OptionProps<Option, true, GroupBase<Option>>
+        ) => optionStyle(styles, props),
+        ...colorStyles,
+        ...styles,
+      }),
+      [styles, optionStyle]
+    );
 
     return (
       <div className="flex flex-col gap-y-2">
@@ -189,33 +230,28 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
           placeholder={placeholder}
           className={className}
           classNamePrefix="react-select"
-          styles={{
-            option: (styles, props) =>
-              optionStyle(styles, props, isHiddenCreateNewOption),
-            ...colorStyles,
-            ...styles,
-          }}
+          styles={memoizedStyles}
           components={{
             ...components,
             DropdownIndicator: null,
-            LoadingIndicator: () => <Spinner className="mr-4 size-5" />,
+            LoadingIndicator: () => <LoadingSpinner className="mr-2 size-6" />,
           }}
           isDisabled={disabled}
           isLoading={loading}
           isSearchable={isSearchable}
-          value={value}
+          value={currentValue}
           defaultValue={defaultValues}
           onCreateOption={onCreateOption}
-          onChange={(newValue, actionMeta) =>
-            onChange(newValue as MultiValue<Option>, actionMeta)
-          }
+          onChange={(newValue, actionMeta) => onChange(newValue, actionMeta)}
           closeMenuOnSelect={closeMenuOnSelect}
           formatCreateLabel={
             isHiddenCreateNewOption
-              ? defaultNoOptionsMessage
+              ? () => defaultNoOptionsMessage('new-option')
               : formatCreateLabel
           }
-          noOptionsMessage={noOptionsMessage || defaultNoOptionsMessage}
+          noOptionsMessage={
+            noOptionsMessage ?? (() => defaultNoOptionsMessage('no-options'))
+          }
         />
       </div>
     );
