@@ -1,4 +1,5 @@
 import {
+  editMember,
   IMemberFormData,
   ISwitchMemberStatusDto,
   registerMember,
@@ -20,4 +21,15 @@ export const useToggleArchiveMutation = () =>
 export const useRegisterMemberMutation = () =>
   useMutation({
     mutationFn: (payload: IMemberFormData) => registerMember(payload),
+  });
+
+export const useEditMemberMutation = () =>
+  useMutation({
+    mutationFn: ({
+      loginId,
+      payload,
+    }: {
+      loginId: string;
+      payload: IMemberFormData;
+    }) => editMember(loginId, payload),
   });

@@ -52,6 +52,12 @@
       "subtitle": "会員登録機能は開発中です。",
       "placeholder": "会員アカウント登録"
     },
+    "memberEdit": {
+      "title": "会員アカウント編集",
+      "subtitle": "会員登録機能は開発中です。",
+      "placeholder": "会員アカウント登録",
+      "memberNotFound": "会員アカウントが見つかりません"
+    },
     "purchaseHistory": {
       "title": "購入履歴",
       "description": "購入履歴の確認と管理機能です。",
@@ -74,7 +80,8 @@
       "previous": "前へ",
       "submit": "送信",
       "close": "閉じる",
-      "register": "登録する"
+      "register": "登録する",
+      "update": "変更する"
     },
     "form": {
       "required": "必須",

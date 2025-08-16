@@ -1,5 +1,6 @@
 import { API_ENDPOINT } from '@/api/common';
 import type {
+  BaseResponseDto,
   BaseResponseListDto,
   BaseResponseWithoutDataDto,
 } from '@/api/common/types';
@@ -60,6 +61,35 @@ export const registerMember = async (payload: IMemberFormData) => {
     const { data } = await axiosClient.post<
       Promise<BaseResponseWithoutDataDto>
     >(API_ENDPOINT.MEMBERS.REGISTER, payload);
+
+    return data;
+  });
+};
+
+export const getMemberByLoginId = async (loginId: string) => {
+  return withApiErrorHandling(async () => {
+    const { data } = await axiosClient.get<BaseResponseDto<IMember>>(
+      `${API_ENDPOINT.MEMBERS.GET_BY_LOGIN_ID.replace(':loginId', loginId)}`
+    );
+
+    if (!data?.data) {
+      throw new Error(data?.message || 'Get member failed - no data returned');
+    }
+
+    const member = {
+      ...data.data,
+      dateOfBirth: new Date(data.data.dateOfBirth),
+    };
+    return member;
+  });
+};
+
+export const editMember = async (loginId: string, payload: IMemberFormData) => {
+  return withApiErrorHandling(async () => {
+    const { data } = await axiosClient.put<Promise<BaseResponseWithoutDataDto>>(
+      `${API_ENDPOINT.MEMBERS.EDIT.replace(':loginId', loginId)}`,
+      payload
+    );
 
     return data;
   });
