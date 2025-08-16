@@ -9,5 +9,6 @@ export const API_ENDPOINT = {
     FILTER: '/members',
     SWITCH_STATUS: '/members/:id/switch-status',
     TOGGLE_ARCHIVE: '/members/:id/toggle-archive',
+    EXPORT_CSV: '/members/export/csv',
   },
 };

@@ -75,7 +75,9 @@
       "archive-member-title": "会員をアーカイブ（削除）しますか？",
       "archive-member-description": "アーカイブすると、会員はログインできなくなります。\n元の情報は削除され、あとで管理者が復元できます。\nよろしければ「はい」を選択して、アーカイブを開始してください。",
       "unarchive-member-title": "会員を復元しますか？",
-      "unarchive-member-description": "復元すると、会員はログイン可能できるようになります。\nよろしければ「はい」を選択して、復元を開始してください" 
+      "unarchive-member-description": "復元すると、会員はログイン可能できるようになります。\nよろしければ「はい」を選択して、復元を開始してください",
+      "exporting-csv": "CSV出力中...",
+      "export-csv-error": "CSV出力に失敗しました。"
        },
     "memberRegistration": {
       "title": "会員アカウント登録",

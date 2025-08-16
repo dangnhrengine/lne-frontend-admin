@@ -53,3 +53,22 @@ export const toggleArchiveMember = async (id: string) => {
     return data;
   });
 };
+
+export const exportCsv = async (filter: IFilterMembersDto) => {
+  return withApiErrorHandling(async () => {
+    const queryParams = queryString.stringify(
+      pickBy(filter, (v) => isNotEmpty(v))
+    );
+    const { data } = await axiosClient.get(
+      `${API_ENDPOINT.MEMBERS.EXPORT_CSV}?${queryParams}`,
+      {
+        responseType: 'blob',
+        headers: {
+          Accept: 'text/csv',
+        },
+      }
+    );
+
+    return data;
+  });
+};
