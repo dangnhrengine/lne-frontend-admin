@@ -78,11 +78,13 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   // this is options get from data after call API
   const referrerOptions = useMemo(() => {
     const memberOptions =
-      filterMemberResponse?.data?.map((member) => ({
-        label: `${member.loginId}${FULL_COLON}${member.name}`,
-        value: member.id,
-        id: member.id,
-      })) || [];
+      filterMemberResponse?.data
+        ?.filter((member) => member.loginId !== memberLoginId)
+        ?.map((member) => ({
+          label: `${member.loginId}${FULL_COLON}${member.name}`,
+          value: member.id,
+          id: member.id,
+        })) || [];
 
     return [
       {
