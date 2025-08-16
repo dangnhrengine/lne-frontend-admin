@@ -1,9 +1,11 @@
-import { FC, memo, ReactNode, useCallback, useMemo, useRef } from 'react';
+import { cn } from '@/utils/helpers';
+import { FC, memo, ReactNode, useCallback, useMemo } from 'react';
 import {
   ActionMeta,
   components,
   CSSObjectWithLabel,
   GroupBase,
+  InputActionMeta,
   MenuListProps,
   MultiValue,
   OptionProps,
@@ -12,17 +14,18 @@ import {
 import ReactCreatableSelect, { CreatableProps } from 'react-select/creatable';
 import { useTranslations } from 'use-intl';
 import { Label } from './Label';
-import { Spinner } from './Spinner';
-import { cn } from '@/utils/helpers';
+import { LoadingSpinner } from './Spinner';
 
 export interface Option {
   value: string;
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
 export interface NoOptionsMessageProps {
   inputValue: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -41,6 +44,7 @@ export interface CreatableSelectProps
   className?: string;
   isHiddenCreateNewOption?: boolean;
   valueField?: keyof Option;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   onChange: (
     option: MultiValue<Option> | Option,
     actionMeta: ActionMeta<Option>
@@ -143,6 +147,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
     disabled,
     isSearchable,
     className,
+    onInputChange,
     onChange,
     options,
     defaultValues,
@@ -163,7 +168,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
         return options?.filter((option) => value.includes(option[valueField]));
       }
       return options?.find((option) => option.value === value);
-    }, [value, options]);
+    }, [value, options, valueField]);
 
     const defaultNoOptionsMessage = useCallback(
       (className?: string) => <NoOptionsMessage className={className} />,
@@ -175,7 +180,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
         styles: CSSObjectWithLabel,
         props: OptionProps<Option, true, GroupBase<Option>>
       ) => {
-        const { isFocused, data, options: propsOptions } = props;
+        const { isFocused, data } = props;
 
         const isNewOption = data?.__isNew__;
         const isNotMatchOption = !options?.find((option) =>
@@ -215,12 +220,16 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
         ...colorStyles,
         ...styles,
       }),
-      [isHiddenCreateNewOption, styles, options]
+      [styles, optionStyle]
     );
 
     return (
       <div className="flex flex-col gap-y-2">
-        <Label className="h-5 text-sm font-medium text-gray-900">{label}</Label>
+        {label && (
+          <Label className="h-5 text-sm font-medium text-gray-900">
+            {label}
+          </Label>
+        )}
         <ReactCreatableSelect
           {...props}
           isMulti={isMulti}
@@ -232,7 +241,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
           components={{
             ...components,
             DropdownIndicator: null,
-            LoadingIndicator: () => <Spinner className="mr-2 size-6" />,
+            LoadingIndicator: () => <LoadingSpinner className="mr-2 size-6" />,
           }}
           isDisabled={disabled}
           isLoading={loading}
@@ -240,6 +249,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
           value={currentValue}
           defaultValue={defaultValues}
           onCreateOption={onCreateOption}
+          onInputChange={onInputChange}
           onChange={(newValue, actionMeta) => onChange(newValue, actionMeta)}
           closeMenuOnSelect={closeMenuOnSelect}
           formatCreateLabel={
