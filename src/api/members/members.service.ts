@@ -7,7 +7,7 @@ import { axiosClient, withApiErrorHandling } from '@/api/lib';
 import type {
   IFilterMembersDto,
   IMember,
-  IMemberRegistration,
+  IMemberFormData,
   ISwitchMemberStatusDto,
 } from '@/api/members/types';
 import { isNotEmpty } from '@/utils';
@@ -55,7 +55,7 @@ export const toggleArchiveMember = async (id: string) => {
   });
 };
 
-export const registerMember = async (payload: IMemberRegistration) => {
+export const registerMember = async (payload: IMemberFormData) => {
   return withApiErrorHandling(async () => {
     const { data } = await axiosClient.post<
       Promise<BaseResponseWithoutDataDto>

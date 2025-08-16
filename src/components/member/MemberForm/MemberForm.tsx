@@ -33,6 +33,7 @@ type MemberFormProps = {
   backHref: string;
   backLabel: string;
   generalError?: string;
+  memberLoginId?: string;
   initialValues?: Partial<MemberFormData>;
 };
 
@@ -42,6 +43,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   backHref,
   backLabel,
   generalError,
+  memberLoginId,
   initialValues,
 }) => {
   const t = useTranslations('memberForm');
@@ -54,8 +56,8 @@ export const MemberForm: React.FC<MemberFormProps> = ({
     return (
       lnePersons?.map((lnePerson) => ({
         label: lnePerson.name,
-        value: lnePerson.name || '',
-        id: lnePerson.id || '',
+        value: lnePerson.id,
+        id: lnePerson.id,
       })) || []
     );
   }, [lnePersons]);
@@ -78,8 +80,8 @@ export const MemberForm: React.FC<MemberFormProps> = ({
     const memberOptions =
       filterMemberResponse?.data?.map((member) => ({
         label: `${member.loginId}${FULL_COLON}${member.name}`,
-        value: member.id || '',
-        id: member.id || '',
+        value: member.id,
+        id: member.id,
       })) || [];
 
     return [
@@ -93,7 +95,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   }, [filterMemberResponse]);
 
   const handleReferrerChange = (inputValue: string) => {
-    // Cập nhật state filter ngay lập tức
     setFilter((prevFilter) => ({
       ...prevFilter,
       search: inputValue,

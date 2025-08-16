@@ -1,7 +1,7 @@
 'use client';
 
 import { isApiError } from '@/api/lib/errorHandler';
-import { IMemberRegistration, useRegisterMemberMutation } from '@/api/members';
+import { IMemberFormData, useRegisterMemberMutation } from '@/api/members';
 import { ProtectedRoute } from '@/components/auth';
 import { MemberForm, MemberFormData } from '@/components/member/MemberForm';
 import { LNE_DIRECT_SELLER, ROUTES } from '@/constants';
@@ -23,7 +23,7 @@ export default function MemberRegistrationPage() {
 
   const onSubmit = async (data: MemberFormData) => {
     setGeneralError(undefined);
-    const payload: IMemberRegistration = {
+    const payload: IMemberFormData = {
       name: data.name,
       gender: data.gender,
       dateOfBirth: new Date(

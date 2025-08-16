@@ -38,7 +38,7 @@ export interface ISwitchMemberStatusDto {
   status: MEMBER_STATUS;
 }
 
-export type IMemberRegistration = Pick<
+export type IMemberFormData = Pick<
   IMember,
   | 'name'
   | 'email'

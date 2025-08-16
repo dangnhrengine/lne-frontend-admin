@@ -1,5 +1,5 @@
 import {
-  IMemberRegistration,
+  IMemberFormData,
   ISwitchMemberStatusDto,
   registerMember,
   switchStatus,
@@ -19,5 +19,5 @@ export const useToggleArchiveMutation = () =>
 
 export const useRegisterMemberMutation = () =>
   useMutation({
-    mutationFn: (payload: IMemberRegistration) => registerMember(payload),
+    mutationFn: (payload: IMemberFormData) => registerMember(payload),
   });
