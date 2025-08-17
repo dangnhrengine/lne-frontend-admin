@@ -16,7 +16,7 @@ import { formatDatePretty } from '@/utils/date';
 import { Trash, Undo, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 
 interface SwitchStatusProps {
   value: boolean;
@@ -73,234 +73,262 @@ const SwitchStatus: React.FC<SwitchStatusProps> = ({ value, onToggle, t }) => {
   );
 };
 
-export const MemberList = ({
-  isLoading,
-  filterMemberResponse,
-  filter,
-  setFilter,
-  handleSwitchStatus,
-  handleShowArchiveModal,
-}: {
-  isLoading: boolean;
-  filterMemberResponse?: BaseResponseListDto<IMember>;
-  filter: IFilterMembersDto;
-  setFilter: (filter: IFilterMembersDto) => void;
-  handleSwitchStatus: (record: IMember, status: MEMBER_STATUS) => void;
-  handleShowArchiveModal: (record: IMember) => void;
-}) => {
-  const t = useTranslations('pages.members');
-  const { data, page, totalPages, total, limit, pagingCounter } =
-    filterMemberResponse || {};
-  const { sortBy, orderBy } = filter;
+export const MemberList = memo(
+  ({
+    isLoading,
+    filterMemberResponse,
+    filter,
+    setFilter,
+    handleSwitchStatus,
+    handleShowArchiveModal,
+  }: {
+    isLoading: boolean;
+    filterMemberResponse?: BaseResponseListDto<IMember>;
+    filter: IFilterMembersDto;
+    setFilter: (filter: IFilterMembersDto) => void;
+    handleSwitchStatus: (record: IMember, status: MEMBER_STATUS) => void;
+    handleShowArchiveModal: (record: IMember) => void;
+  }) => {
+    const t = useTranslations('pages.members');
+    const tOrdering = useTranslations('ordering');
 
-  const columns: Column<IMember>[] = useMemo(
-    () => [
-      {
-        key: 'loginId',
-        title: t('loginId'),
-        width: '100px',
-        sortable: true,
-      },
-      {
-        key: 'name',
-        title: t('name'),
-        width: '150px',
-        sortable: true,
-        render: (value: string) => (
-          <p className="text-center font-medium text-gray-900">{value}</p>
-        ),
-      },
-      {
-        key: 'lnePhone',
-        title: t('lnePhone'),
-        width: '120px',
-        sortable: true,
-      },
-      {
-        key: 'membershipFeeRate',
-        title: t('membershipFeeRate'),
-        width: '90px',
-        sortable: true,
-        render: (value: number) => <p>{Number(value) || 0}%</p>,
-      },
-      {
-        key: 'transactionsDate',
-        title: t('transactionsDate'),
-        width: '130px',
-        className: '!whitespace-pre-line',
-        render: () => <p>-</p>,
-      },
-      {
-        key: 'referrerDate',
-        title: t('referrerDate'),
-        width: '100px',
-        className: '!whitespace-pre-line',
-        render: (value, record) => (
-          <div className="flex flex-col items-center">
-            <p>{value ? record?.referrer?.name || '-' : t('lneReferrer')}</p>
-            <div className="flex items-center gap-x-1">
-              <User className="h-4 w-4 text-gray-400" />
-              {formatDatePretty({
-                value: record.createdAt || '',
-              })}
+    const { data, page, totalPages, total, limit, pagingCounter } =
+      filterMemberResponse || {};
+    const { sortBy, orderBy } = filter;
+
+    const columns: Column<IMember>[] = useMemo(
+      () => [
+        {
+          key: 'loginId',
+          title: t('loginId'),
+          width: '100px',
+          sortable: false,
+        },
+        {
+          key: 'name',
+          title: t('name'),
+          width: '150px',
+          sortable: false,
+          render: (value: string) => (
+            <p className="text-center font-medium text-gray-900">{value}</p>
+          ),
+        },
+        {
+          key: 'lnePhone',
+          title: t('lnePhone'),
+          width: '120px',
+          sortable: false,
+        },
+        {
+          key: 'membershipFeeRate',
+          title: t('membershipFeeRate'),
+          width: '90px',
+          sortable: false,
+          render: (value: number) => <p>{Number(value) || 0}%</p>,
+        },
+        {
+          key: 'transactionsDate',
+          title: t('transactionsDate'),
+          width: '130px',
+          className: '!whitespace-pre-line',
+          render: () => <p>-</p>,
+        },
+        {
+          key: 'referrerDate',
+          title: t('referrerDate'),
+          width: '100px',
+          className: '!whitespace-pre-line',
+          render: (_, record) => (
+            <div className="flex flex-col items-center">
+              <p>
+                {record?.referrer?.name
+                  ? record?.referrer?.name
+                  : t('lneReferrer')}
+              </p>
+              <div className="flex items-center gap-x-1">
+                <User className="h-4 w-4 text-gray-400" />
+                {formatDatePretty({
+                  value: record.createdAt || '',
+                })}
+              </div>
             </div>
-          </div>
-        ),
-      },
-      {
-        key: 'introducedFeeRate',
-        title: t('introducedFeeRate'),
-        width: '90px',
-        sortable: true,
-        render: (value: number) => <p>{Number(value) || 0}%</p>,
-      },
-      {
-        key: 'status',
-        title: t('status'),
-        width: '100px',
-        sortable: true,
-        render: (value, record) => {
-          const isValidValue = value === MEMBER_STATUS.VALID;
-          const handleToggle = () => {
-            handleSwitchStatus(
-              record,
-              isValidValue ? MEMBER_STATUS.INVALID : MEMBER_STATUS.VALID
+          ),
+        },
+        {
+          key: 'introducedFeeRate',
+          title: t('introducedFeeRate'),
+          width: '90px',
+          sortable: false,
+          render: (value: number) => <p>{Number(value) || 0}%</p>,
+        },
+        {
+          key: 'status',
+          title: t('status'),
+          width: '100px',
+          sortable: false,
+          render: (value, record) => {
+            const isValidValue = value === MEMBER_STATUS.VALID;
+            const handleToggle = () => {
+              handleSwitchStatus(
+                record,
+                isValidValue ? MEMBER_STATUS.INVALID : MEMBER_STATUS.VALID
+              );
+            };
+            return (
+              <SwitchStatus
+                value={isValidValue}
+                onToggle={handleToggle}
+                t={t}
+              />
             );
-          };
-          return (
-            <SwitchStatus value={isValidValue} onToggle={handleToggle} t={t} />
-          );
+          },
         },
-      },
-      {
-        key: 'edit-actions',
-        title: t('edit'),
-        width: '80px',
-        render: (_, record) => (
-          <Link href={ROUTES.EDIT_MEMBER.replace(':id', record.id)}>
-            <Button className="rounded px-6 transition-colors">
-              {t('change')}
-            </Button>
-          </Link>
-        ),
-      },
-      {
-        key: 'delete-actions',
-        title: t('delete'),
-        width: '80px',
-        render: (_, record) => {
-          const isActive = record.isActive;
-          return (
-            <Button
-              className="flex-center w-full !bg-transparent text-primary-500 transition-colors hover:text-primary-700"
-              onClick={() => handleShowArchiveModal(record)}
-            >
-              {isActive ? (
-                <Trash fill="currentColor" />
-              ) : (
-                <Undo className="text-red-500 hover:text-red-800" />
-              )}
-            </Button>
-          );
+        {
+          key: 'edit-actions',
+          title: t('edit'),
+          width: '80px',
+          render: (_, record) => (
+            <Link href={ROUTES.EDIT_MEMBER.replace(':id', record.id)}>
+              <Button className="rounded px-6 transition-colors">
+                {t('change')}
+              </Button>
+            </Link>
+          ),
         },
-      },
-    ],
-    [handleShowArchiveModal, handleSwitchStatus, t]
-  );
+        {
+          key: 'delete-actions',
+          title: t('delete'),
+          width: '80px',
+          render: (_, record) => {
+            const isActive = record.isActive;
+            return (
+              <Button
+                className={cn(
+                  'flex-center w-full !bg-transparent text-primary-500 transition-colors hover:text-primary-700',
+                  {
+                    isArchived: !record.isActive,
+                  }
+                )}
+                onClick={() => handleShowArchiveModal(record)}
+              >
+                {isActive ? (
+                  <Trash fill="currentColor" />
+                ) : (
+                  <Undo className="text-red-500 hover:text-red-800" />
+                )}
+              </Button>
+            );
+          },
+        },
+      ],
+      [handleShowArchiveModal, handleSwitchStatus, t]
+    );
 
-  const orderOptions: OrderOption<IMember>[] = useMemo(() => {
-    return [
-      {
-        label: '会員料率昇順',
-        value: 'membershipFeeRate',
-        orderBy: 'ASC',
-      },
-      {
-        label: '会員料率降順',
-        value: 'membershipFeeRate',
-        orderBy: 'DESC',
-      },
-      {
-        label: '取引回数昇順',
-        value: 'transactionsNumber',
-        orderBy: 'ASC',
-      },
-      {
-        label: '取引回数降順',
-        value: 'transactionsNumber',
-        orderBy: 'DESC',
-      },
-      {
-        label: '入会日昇順',
-        value: 'createdAt',
-        orderBy: 'ASC',
-      },
-      {
-        label: '入会日降順',
-        value: 'createdAt',
-        orderBy: 'DESC',
-      },
-      {
-        label: '紹介料率昇順',
-        value: 'introducedFeeRate',
-        orderBy: 'ASC',
-      },
-      {
-        label: '紹介料率降順',
-        value: 'introducedFeeRate',
-        orderBy: 'DESC',
-      },
-    ];
-  }, []);
+    const orderOptions: OrderOption<IMember>[] = useMemo(() => {
+      return [
+        {
+          label: `${t('orderFields.membershipFeeRate')}${tOrdering('asc')}`,
+          value: 'membershipFeeRate',
+          orderBy: 'ASC',
+        },
+        {
+          label: `${t('orderFields.membershipFeeRate')}${tOrdering('desc')}`,
+          value: 'membershipFeeRate',
+          orderBy: 'DESC',
+        },
+        {
+          label: `${t('orderFields.transactionsNumber')}${tOrdering('asc')}`,
+          value: 'transactionsNumber',
+          orderBy: 'ASC',
+        },
+        {
+          label: `${t('orderFields.transactionsNumber')}${tOrdering('desc')}`,
+          value: 'transactionsNumber',
+          orderBy: 'DESC',
+        },
+        {
+          label: `${t('orderFields.transactionsDate')}${tOrdering('asc')}`,
+          value: 'transactionsDate' as keyof IMember,
+          orderBy: 'ASC',
+        },
+        {
+          label: `${t('orderFields.transactionsDate')}${tOrdering('desc')}`,
+          value: 'transactionsDate' as keyof IMember,
+          orderBy: 'DESC',
+        },
+        {
+          label: `${t('orderFields.createdAt')}${tOrdering('asc')}`,
+          value: 'createdAt',
+          orderBy: 'ASC',
+        },
+        {
+          label: `${t('orderFields.createdAt')}${tOrdering('desc')}`,
+          value: 'createdAt',
+          orderBy: 'DESC',
+        },
+        {
+          label: `${t('orderFields.introducedFeeRate')}${tOrdering('asc')}`,
+          value: 'introducedFeeRate',
+          orderBy: 'ASC',
+        },
+        {
+          label: `${t('orderFields.introducedFeeRate')}${tOrdering('desc')}`,
+          value: 'introducedFeeRate',
+          orderBy: 'DESC',
+        },
+      ];
+    }, [t, tOrdering]);
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setFilter({
-        ...filter,
-        currentPage: String(page),
-      });
-    },
-    [filter, setFilter]
-  );
+    const handlePageChange = useCallback(
+      (page: number) => {
+        setFilter({
+          ...filter,
+          currentPage: String(page),
+        });
+      },
+      [filter, setFilter]
+    );
 
-  const handleSort = useCallback(
-    (field: keyof IMember, order: OrderBy) => {
-      setFilter({
-        ...filter,
-        sortBy: field,
-        orderBy: order,
-      });
-    },
-    [filter, setFilter]
-  );
+    const handleOrderChange = useCallback(
+      (field: keyof IMember, order: OrderBy) => {
+        setFilter({
+          ...filter,
+          sortBy: field,
+          orderBy: order,
+        });
+      },
+      [filter, setFilter]
+    );
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <TableOrdering
-        total={total}
-        pagingCounter={pagingCounter}
-        limit={limit}
-        page={page}
-        orderOptions={orderOptions}
-        handleOrderChange={() => {}}
-      />
+    return (
+      <div className="min-h-screen bg-gray-100 p-6">
+        <TableOrdering
+          total={total}
+          pagingCounter={pagingCounter}
+          limit={limit}
+          page={page}
+          orderOptions={orderOptions}
+          handleOrderChange={handleOrderChange}
+        />
 
-      <Table
-        loading={isLoading}
-        data={data || []}
-        columns={columns}
-        rowKey="id"
-        onSort={handleSort}
-        sortField={sortBy}
-        sortOrder={orderBy}
-        className="shadow-sm"
-      />
+        <Table
+          loading={isLoading}
+          data={data || []}
+          columns={columns}
+          rowKey="id"
+          sortField={sortBy}
+          sortOrder={orderBy}
+          className="shadow-sm"
+        />
 
-      <Pagination
-        current={page || 1}
-        totalPages={totalPages || 0}
-        onChange={handlePageChange}
-      />
-    </div>
-  );
-};
+        <Pagination
+          current={page || 1}
+          totalPages={totalPages || 0}
+          onChange={handlePageChange}
+        />
+      </div>
+    );
+  }
+);
+
+MemberList.displayName = 'MemberList';

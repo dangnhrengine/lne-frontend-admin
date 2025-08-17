@@ -45,7 +45,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
   const handleWheel = useCallback(
     (e: React.WheelEvent<HTMLInputElement>) => {
       if (props.type === 'number' && !props?.onWheel) {
-        return e.preventDefault();
+        return e.currentTarget.blur();
       }
       props?.onWheel?.(e);
     },

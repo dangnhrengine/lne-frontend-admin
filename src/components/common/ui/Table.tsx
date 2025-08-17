@@ -9,11 +9,11 @@ export interface Column<T> {
   key: keyof T | string;
   title: string;
   width?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  render?: (value: any, record: T, index: number) => React.ReactNode;
   sortable?: boolean;
   align?: 'left' | 'center' | 'right';
   className?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  render?: (value: any, record: T, index: number) => React.ReactNode;
 }
 
 export interface TableProps<T> {
@@ -64,7 +64,7 @@ export const Table = <T,>({
                     `whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 transition-colors`,
                     {
                       'cursor-pointer select-none hover:bg-gray-100':
-                        column.sortable,
+                        column?.sortable,
                     },
                     column?.className
                   )}
@@ -73,7 +73,7 @@ export const Table = <T,>({
                     minWidth: column.width || '120px', // Ensure minimum width
                   }}
                   onClick={() =>
-                    column.sortable &&
+                    column?.sortable &&
                     onSort?.(
                       column.key as keyof T,
                       sortOrder === 'ASC' ? 'DESC' : 'ASC'
@@ -85,7 +85,7 @@ export const Table = <T,>({
                     style={{ textAlign: column.align || 'center' }}
                   >
                     {column.title}
-                    {column.sortable && sortField === column.key && (
+                    {column?.sortable && sortField === column.key && (
                       <span className="text-blue-500">
                         {sortOrder === 'ASC' ? '↑' : '↓'}
                       </span>

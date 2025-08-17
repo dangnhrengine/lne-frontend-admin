@@ -40,4 +40,8 @@
   .radio-wrapper input:checked + .radio-btn {
     @apply border-4 bg-gray-900;
   }
+
+  tr:has(td button.isArchived) {
+    @apply bg-primary-200;
+  }
 }

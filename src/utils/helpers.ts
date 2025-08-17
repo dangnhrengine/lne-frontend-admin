@@ -93,3 +93,5 @@ export const isNotEmpty = (
 export const convertDateToISOString = (date?: Date) => {
   return date instanceof Date ? date.toISOString() : undefined;
 };
+
+export const isEmptyObject = (data: object) => Object.keys(data).length === 0;

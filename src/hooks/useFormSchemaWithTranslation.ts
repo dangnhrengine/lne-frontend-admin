@@ -8,7 +8,7 @@ export interface FormSchemaProps {
   translation: Translation;
 }
 
-const useFormSchemaWithTranslation = <T extends yup.AnyObject>(
+export const useFormSchemaWithTranslation = <T extends yup.AnyObject>(
   callback: ({ translation }: FormSchemaProps) => yup.ObjectSchema<T>
 ) => {
   const translation = useTranslations();
@@ -19,5 +19,3 @@ const useFormSchemaWithTranslation = <T extends yup.AnyObject>(
   );
   return formSchema;
 };
-
-export default useFormSchemaWithTranslation;

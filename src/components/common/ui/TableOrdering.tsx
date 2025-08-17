@@ -17,7 +17,7 @@ export interface OrderOption<T> {
 
 interface TableOrderingProps<T> extends BaseResponseListDto<T> {
   orderOptions: OrderOption<T>[];
-  handleOrderChange: (value: keyof T) => void;
+  handleOrderChange: (value: keyof T, orderBy: OrderBy) => void;
 }
 
 export const TableOrdering = <T,>({
@@ -55,7 +55,7 @@ export const TableOrdering = <T,>({
           {orderOptions.map((option, index) => (
             <DropdownMenuItem
               key={index}
-              onClick={() => handleOrderChange(option.value)}
+              onClick={() => handleOrderChange(option.value, option.orderBy)}
               className="flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700 focus:outline-none"
             >
               {option.label}

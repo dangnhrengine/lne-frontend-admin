@@ -9,15 +9,13 @@ import type {
   IMember,
   ISwitchMemberStatusDto,
 } from '@/api/members/types';
+import { stringifyParams } from '@/hooks';
 import { isNotEmpty } from '@/utils';
 import pickBy from 'lodash.pickby';
-import queryString from 'query-string';
 
 export const filterMembers = async (filter: IFilterMembersDto) => {
   return withApiErrorHandling(async () => {
-    const queryParams = queryString.stringify(
-      pickBy(filter, (v) => isNotEmpty(v))
-    );
+    const queryParams = stringifyParams(pickBy(filter, (v) => isNotEmpty(v)));
     const { data } = await axiosClient.get<BaseResponseListDto<IMember>>(
       `${API_ENDPOINT.MEMBERS.FILTER}?${queryParams}`
     );

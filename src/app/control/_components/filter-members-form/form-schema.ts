@@ -8,7 +8,17 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
     name: yup.string().optional(),
     lnePhone: yup
       .number()
-      .test('numeric', translation('validation.numeric'), (value) => {
+      .nullable()
+      .test('numeric', translation('validation.numeric'), (value, context) => {
+        if (value && value?.toString().length > 13) {
+          return context.createError({
+            message: translation('validation.maxLength', {
+              field: 'lnePhone',
+              max: 13,
+            }),
+            path: context?.path,
+          });
+        }
         if (!value || typeof value === 'number') {
           return true;
         }
@@ -16,6 +26,7 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
       }),
     transactionsNumber: yup
       .number()
+      .nullable()
       .test('numeric', translation('validation.numeric'), (value) => {
         if (!value || typeof value === 'number') {
           return true;

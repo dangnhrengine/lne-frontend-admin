@@ -5,8 +5,8 @@ import { MEMBER_STATUS } from '@/types/members';
 export interface IFilterMembersDto extends IPaginationDto<IMember> {
   loginId?: string;
   name?: string;
-  lnePhone?: string;
-  transactionsNumber?: number;
+  lnePhone?: string | null;
+  transactionsNumber?: number | null;
   referrerId?: string;
   lnePersonId?: string;
   status?: MEMBER_STATUS;

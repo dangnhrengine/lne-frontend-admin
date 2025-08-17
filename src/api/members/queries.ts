@@ -8,5 +8,7 @@ export const useFilterMembersQuery = (filter: IFilterMembersDto) => {
     queryKey: [QUERY_KEYS.FILTER_MEMBERS, filter],
     queryFn: () => filterMembers(filter),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };

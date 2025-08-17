@@ -74,7 +74,7 @@ export const Alert: React.FC<AlertProps> = ({
   className,
   dismissible = true,
   onClose,
-  autoCloseMs,
+  autoCloseMs = 10000,
   icon,
   role = 'alert',
 }) => {
