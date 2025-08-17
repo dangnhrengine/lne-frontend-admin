@@ -82,7 +82,7 @@
         "transactionsDate": "最終取引年月日",
         "createdAt": "入会日",
         "introducedFeeRate": "紹介料率"
-      }  
+      }
     },
     "memberRegistration": {
       "title": "会員アカウント登録",
@@ -157,7 +157,8 @@
     "numeric": "数値を入力してください",
     "phone": "有効な電話番号を入力してください",
     "url": "有効なURLを入力してください",
-    "requiredField": "この項目は必須です"
+    "requiredField": "この項目は必須です",
+    "referrerLoginId": "紹介者IDはL000001のような形式で入力してください"
   },
   "messages": {
     "success": {

@@ -238,12 +238,12 @@ export const MemberList = memo(
         },
         {
           label: `${t('orderFields.transactionsNumber')}${tOrdering('asc')}`,
-          value: 'transactionsNumber',
+          value: 'transactionFrequency',
           orderBy: 'ASC',
         },
         {
           label: `${t('orderFields.transactionsNumber')}${tOrdering('desc')}`,
-          value: 'transactionsNumber',
+          value: 'transactionFrequency',
           orderBy: 'DESC',
         },
         {

@@ -53,8 +53,8 @@ const FilterMembersForm = memo(
           loginId: '',
           name: undefined,
           lnePhone: undefined,
-          transactionsNumber: undefined,
-          referrerId: '',
+          transactionFrequency: undefined,
+          referrerLoginId: '',
           lnePersonId: '',
           isArchived: false,
           startDate: undefined,
@@ -95,8 +95,8 @@ const FilterMembersForm = memo(
           loginId,
           name,
           lnePhone,
-          transactionsNumber = null,
-          referrerId,
+          transactionFrequency = null,
+          referrerLoginId,
           lnePersonId,
           isActive,
           startDate,
@@ -108,8 +108,8 @@ const FilterMembersForm = memo(
           loginId,
           name,
           lnePhone: lnePhone ? Number(lnePhone) : undefined,
-          transactionsNumber,
-          referrerId,
+          transactionFrequency,
+          referrerLoginId,
           lnePersonId,
           isArchived: isActive?.toString() === 'false',
           startDate: startDate ? new Date(startDate) : undefined,
@@ -224,7 +224,7 @@ const FilterMembersForm = memo(
                   )}
                 />
                 <FormField
-                  name="transactionsNumber"
+                  name="transactionFrequency"
                   render={({ field }) => (
                     <FormItem className={formItemClasses}>
                       <FormControl>
@@ -245,7 +245,7 @@ const FilterMembersForm = memo(
                   )}
                 />
                 <FormField
-                  name="referrerId"
+                  name="referrerLoginId"
                   render={({ field }) => (
                     <FormItem className={formItemClasses}>
                       <FormControl>

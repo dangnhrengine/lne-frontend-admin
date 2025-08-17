@@ -13,7 +13,7 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
         if (value && value?.toString().length > 13) {
           return context.createError({
             message: translation('validation.maxLength', {
-              field: 'lnePhone',
+              field: translation('pages.members.lnePhone'),
               max: 13,
             }),
             path: context?.path,
@@ -24,7 +24,7 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
         }
         return /^[0-9]+$/.test(value) && !/[.,\-]/.test(value);
       }),
-    transactionsNumber: yup
+    transactionFrequency: yup
       .number()
       .nullable()
       .test('numeric', translation('validation.numeric'), (value) => {
@@ -33,7 +33,18 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
         }
         return /^[0-9]+$/.test(value) && !/[.,\-]/.test(value);
       }),
-    referrerId: yup.string(),
+    referrerLoginId: yup
+      .string()
+      .test(
+        'referrerLoginId',
+        translation('validation.referrerLoginId'),
+        (value) => {
+          if (!value) {
+            return true;
+          }
+          return /^L\d{6}$/.test(value);
+        }
+      ),
     lnePersonId: yup.string(),
     isArchived: yup.boolean(),
     startDate: yup.date().optional(),
