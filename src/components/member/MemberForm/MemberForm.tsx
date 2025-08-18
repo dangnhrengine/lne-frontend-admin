@@ -33,7 +33,7 @@ type MemberFormProps = {
   backHref: string;
   backLabel: string;
   generalError?: string;
-  memberLoginId?: string;
+  memberId?: string;
   initialValues?: Partial<MemberFormData>;
 };
 
@@ -43,7 +43,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   backHref,
   backLabel,
   generalError,
-  memberLoginId,
+  memberId,
   initialValues,
 }) => {
   const t = useTranslations('memberForm');
@@ -79,7 +79,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   const referrerOptions = useMemo(() => {
     const memberOptions =
       filterMemberResponse?.data
-        ?.filter((member) => member.loginId !== memberLoginId)
+        ?.filter((member) => member.id !== memberId)
         ?.map((member) => ({
           label: `${member.loginId}${FULL_COLON}${member.name}`,
           value: member.id,

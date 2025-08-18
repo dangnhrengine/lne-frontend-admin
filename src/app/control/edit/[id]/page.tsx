@@ -1,10 +1,7 @@
 'use client';
 
 import { isApiError } from '@/api/lib/errorHandler';
-import {
-  useEditMemberMutation,
-  useGetMemberByLoginIdQuery,
-} from '@/api/members';
+import { useEditMemberMutation, useGetMemberByIdQuery } from '@/api/members';
 
 import { ProtectedRoute } from '@/components/auth';
 import { FullScreenSpinner } from '@/components/common/ui';
@@ -18,7 +15,7 @@ import { useState } from 'react';
 
 export default function MemberEditPage() {
   const params = useParams();
-  const memberLoginId = params.loginId as string;
+  const memberId = params.id as string;
 
   const t = useTranslations('pages.memberEdit');
   const tBtn = useTranslations('ui.buttons');
@@ -35,7 +32,7 @@ export default function MemberEditPage() {
     data: member,
     isLoading,
     error: getError,
-  } = useGetMemberByLoginIdQuery(memberLoginId);
+  } = useGetMemberByIdQuery(memberId);
 
   const parseBirthDate = (birthDate: Date) => {
     return {
@@ -63,7 +60,7 @@ export default function MemberEditPage() {
       customPhone: member.customPhone,
       lnePhone: member.lnePhone,
       membershipFeeRate: String(member.membershipFeeRate),
-      referrerId: member.referrerId,
+      referrerId: member.referrerId || LNE_DIRECT_SELLER,
       lnePersonId: member.lnePersonId,
       introducedFeeRate: String(member.introducedFeeRate),
     };
@@ -88,7 +85,7 @@ export default function MemberEditPage() {
     };
 
     try {
-      await editMember({ loginId: memberLoginId, payload });
+      await editMember({ id: memberId, payload });
       router.push(ROUTES.MEMBERS);
     } catch (error) {
       logError('Edit member failed:', error as unknown);
@@ -170,7 +167,7 @@ export default function MemberEditPage() {
           backHref="/control"
           backLabel={tCommon('backToMembers')}
           generalError={generalError}
-          memberLoginId={memberLoginId}
+          memberId={memberId}
           initialValues={getInitialValues()}
         />
       </div>

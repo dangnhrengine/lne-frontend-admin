@@ -25,11 +25,6 @@ export const useRegisterMemberMutation = () =>
 
 export const useEditMemberMutation = () =>
   useMutation({
-    mutationFn: ({
-      loginId,
-      payload,
-    }: {
-      loginId: string;
-      payload: IMemberFormData;
-    }) => editMember(loginId, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: IMemberFormData }) =>
+      editMember(id, payload),
   });

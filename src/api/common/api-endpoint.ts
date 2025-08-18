@@ -10,7 +10,7 @@ export const API_ENDPOINT = {
     FILTER: '/members',
     SWITCH_STATUS: '/members/:id/switch-status',
     TOGGLE_ARCHIVE: '/members/:id/toggle-archive',
-    GET_BY_LOGIN_ID: '/members/:loginId',
-    EDIT: '/members/:loginId',
+    GET_BY_ID: '/members/:id',
+    EDIT: '/members/:id',
   },
 };

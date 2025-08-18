@@ -66,10 +66,10 @@ export const registerMember = async (payload: IMemberFormData) => {
   });
 };
 
-export const getMemberByLoginId = async (loginId: string) => {
+export const getMemberById = async (id: string) => {
   return withApiErrorHandling(async () => {
     const { data } = await axiosClient.get<BaseResponseDto<IMember>>(
-      `${API_ENDPOINT.MEMBERS.GET_BY_LOGIN_ID.replace(':loginId', loginId)}`
+      `${API_ENDPOINT.MEMBERS.GET_BY_ID.replace(':id', id)}`
     );
 
     if (!data?.data) {
@@ -84,10 +84,10 @@ export const getMemberByLoginId = async (loginId: string) => {
   });
 };
 
-export const editMember = async (loginId: string, payload: IMemberFormData) => {
+export const editMember = async (id: string, payload: IMemberFormData) => {
   return withApiErrorHandling(async () => {
     const { data } = await axiosClient.put<Promise<BaseResponseWithoutDataDto>>(
-      `${API_ENDPOINT.MEMBERS.EDIT.replace(':loginId', loginId)}`,
+      `${API_ENDPOINT.MEMBERS.EDIT.replace(':id', id)}`,
       payload
     );
 

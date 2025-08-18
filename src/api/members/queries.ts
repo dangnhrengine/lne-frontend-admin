@@ -1,7 +1,4 @@
-import {
-  filterMembers,
-  getMemberByLoginId,
-} from '@/api/members/members.service';
+import { filterMembers, getMemberById } from '@/api/members/members.service';
 import type { IFilterMembersDto } from '@/api/members/types';
 import { QUERY_KEYS } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
@@ -15,8 +12,8 @@ export const useFilterMembersQuery = (filter: IFilterMembersDto) => {
   });
 };
 
-export const useGetMemberByLoginIdQuery = (loginId: string) =>
+export const useGetMemberByIdQuery = (id: string) =>
   useQuery({
-    queryKey: ['member', loginId],
-    queryFn: () => getMemberByLoginId(loginId),
+    queryKey: [QUERY_KEYS.GET_MEMBER_BY_ID, id],
+    queryFn: () => getMemberById(id),
   });
