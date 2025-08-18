@@ -44,7 +44,9 @@ export default function MemberEditPage() {
 
   // Convert member data to form data format
   const getInitialValues = () => {
-    if (!member) return {};
+    if (!member) {
+      return {};
+    }
 
     const { birthYear, birthMonth, birthDay } = parseBirthDate(
       member.dateOfBirth

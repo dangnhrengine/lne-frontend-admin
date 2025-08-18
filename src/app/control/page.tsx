@@ -254,28 +254,6 @@ export default function MembersPage() {
           onSubmit={handleToggleArchive}
         />
       )}
-      <MemberList
-        isLoading={isLoadingFilter}
-        filter={filter}
-        filterMemberResponse={filterMemberResponse}
-        setFilter={setFilter}
-        handleSwitchStatus={handleSwitchStatus}
-        handleShowArchiveModal={handleShowArchiveModal}
-      />
-      {currentMember && (
-        <ToggleArchiveModal
-          title={t(`${isMemberActive ? 'archive' : 'unarchive'}-member-title`)}
-          description={t(
-            `${isMemberActive ? 'archive' : 'unarchive'}-member-description`
-          )}
-          isLoading={isLoadingArchive}
-          isOpen={!!currentMember}
-          closeOnPressEscape={false}
-          closeOnClickOutside={false}
-          onClose={handleCloseArchiveModal}
-          onSubmit={handleToggleArchive}
-        />
-      )}
     </ProtectedRoute>
   );
 }

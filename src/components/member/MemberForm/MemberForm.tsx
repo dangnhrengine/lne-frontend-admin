@@ -17,7 +17,7 @@ import {
 } from '@/components/common/ui';
 import { Option } from '@/components/common/ui/CreatableSelect';
 import { FULL_COLON, LNE_DIRECT_SELLER } from '@/constants';
-import useFormSchemaWithTranslation from '@/hooks/useFormSchemaWithTranslation';
+import { useFormSchemaWithTranslation } from '@/hooks/useFormSchemaWithTranslation';
 import { MEMBER_STATUS } from '@/types/members';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslations } from 'next-intl';
@@ -94,7 +94,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
       },
       ...memberOptions,
     ];
-  }, [filterMemberResponse]);
+  }, [filterMemberResponse, memberId]);
 
   const handleReferrerChange = (inputValue: string) => {
     setFilter((prevFilter) => ({
@@ -105,7 +105,9 @@ export const MemberForm: React.FC<MemberFormProps> = ({
 
   const years = useMemo(() => {
     const arr: number[] = [];
-    for (let y = 1900; y <= 2100; y++) arr.push(y);
+    for (let y = 1900; y <= 2100; y++) {
+      arr.push(y);
+    }
     return arr;
   }, []);
   const months = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
@@ -515,7 +517,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
                           loading={isLoadingFilter}
                           options={referrerOptions}
                           onInputChange={handleReferrerChange}
-                          onChange={(option, actionMeta) => {
+                          onChange={(option) => {
                             field.onChange((option as Option)?.id);
                           }}
                         />

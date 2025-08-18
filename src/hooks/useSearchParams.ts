@@ -40,7 +40,7 @@ const useQuerySearchParams = <T extends AnyObject>() => {
         options
       );
     },
-    [pathname]
+    [pathname, replace]
   );
 
   return { queryParams, onChangeSearchParams, replace };
