@@ -1,4 +1,5 @@
 import { cn } from '@/utils/helpers';
+import { X } from 'lucide-react';
 import { FC, memo, ReactNode, useCallback, useMemo } from 'react';
 import {
   ActionMeta,
@@ -146,6 +147,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
     loading = false,
     disabled,
     isSearchable,
+    isClearable,
     className,
     onInputChange,
     onChange,
@@ -184,7 +186,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
 
         const isNewOption = data?.__isNew__;
         const isNotMatchOption = !options?.find((option) =>
-          option?.value.includes(data.value)
+          option?.value.toLowerCase().includes(data.value.toLowerCase())
         );
 
         const optionStyles = {
@@ -226,7 +228,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
     return (
       <div className="flex flex-col gap-y-2">
         {label && (
-          <Label className="h-5 text-sm font-medium text-gray-900">
+          <Label className="h-5 text-sm font-medium text-primary-800">
             {label}
           </Label>
         )}
@@ -241,8 +243,16 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
           components={{
             ...components,
             DropdownIndicator: null,
+            ClearIndicator: ({ clearValue }) => {
+              return (
+                <div className="flex-center p-2" onClick={clearValue}>
+                  <X className="size-4 text-primary-800" />
+                </div>
+              );
+            },
             LoadingIndicator: () => <LoadingSpinner className="mr-2 size-6" />,
           }}
+          isClearable={isClearable}
           isDisabled={disabled}
           isLoading={loading}
           isSearchable={isSearchable}

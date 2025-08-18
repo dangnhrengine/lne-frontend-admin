@@ -23,7 +23,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
   // Normal state classes
   const normalClasses = useMemo(
     () =>
-      'bg-gray-100 border-gray-200 text-gray-900 focus:bg-gray-100 focus:border-gray-300',
+      'bg-gray-100 border-gray-200 text-primary-800 focus:bg-gray-100 focus:border-gray-300',
     []
   );
 
@@ -57,7 +57,7 @@ export const FormInput: React.FC<IFormInputProps> = ({
       {label !== '' && (
         <label
           htmlFor={id}
-          className="block h-5 text-sm font-medium text-gray-900"
+          className="block h-5 text-sm font-medium text-primary-800"
         >
           {label}
         </label>

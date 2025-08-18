@@ -50,12 +50,12 @@ export const Checkbox = forwardRef(
               })}
               forceMount={true}
             >
-              <CheckIcon className="size-4 text-gray-900" />
+              <CheckIcon className="size-4 text-primary-800" />
             </CheckboxPrimitive.Indicator>
           </CheckboxPrimitive.Root>
         </div>
         {label && (
-          <label className="text-sm text-gray-900" htmlFor={inputId}>
+          <label className="text-sm text-primary-800" htmlFor={inputId}>
             {label}
           </label>
         )}

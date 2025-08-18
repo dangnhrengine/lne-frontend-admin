@@ -6,7 +6,7 @@ export const ToggleArchiveModal = (props: ConfirmationModalProps) => {
   return (
     <ConfirmationModal {...props}>
       <div className="px-10">
-        <p className="whitespace-pre-line text-sm leading-6 text-gray-900">
+        <p className="whitespace-pre-line text-sm leading-6 text-primary-800">
           {props.description}
         </p>
       </div>

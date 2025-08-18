@@ -58,8 +58,6 @@
       "status": "ステータス",
       "status-valid": "有効",
       "status-invalid": "一時停止",
-      "reset": "リセット",
-      "submit": "検索する",
       "membershipFeeRate": "会員料率",
       "transactionsDate": "取引回数 / \n 最終取引年月日",
       "referrerDate": "紹介者 / \n 入会日",
@@ -81,8 +79,10 @@
         "transactionsNumber": "取引回数",
         "transactionsDate": "最終取引年月日",
         "createdAt": "入会日",
-        "introducedFeeRate": "紹介料率"
+        "introducedFeeRate": "紹介料率",
+        "default": "並べ替え"
       },
+      "transactionCount": "{count}回",
       "exporting-csv": "CSV出力中...",
       "export-csv-error": "CSV出力に失敗しました。"
     },
@@ -121,7 +121,9 @@
       "submit": "送信",
       "close": "閉じる",
       "register": "登録する",
-      "update": "変更する"
+      "update": "変更する",
+      "form-reset": "リセット",
+      "form-submit": "検索する"
     },
     "form": {
       "required": "必須",

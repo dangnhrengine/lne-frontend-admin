@@ -1,7 +1,6 @@
 import { useGetLnePersonsQuery } from '@/api/lne-persons';
 import { IFilterMembersDto } from '@/api/members';
 import {
-  Button,
   Checkbox,
   CreatableSelect,
   DatePicker,
@@ -12,6 +11,7 @@ import {
   FormItem,
   FormMessage,
   FormRadio,
+  SubmitBar,
 } from '@/components/common/ui';
 import { Option } from '@/components/common/ui/CreatableSelect';
 import { useFormSchemaWithTranslation } from '@/hooks';
@@ -53,10 +53,10 @@ const FilterMembersForm = memo(
           loginId: '',
           name: undefined,
           lnePhone: undefined,
-          transactionFrequency: undefined,
-          referrerLoginId: '',
+          transactionCount: undefined,
+          referrerNameOrLoginId: '',
           lnePersonId: '',
-          isArchived: false,
+          isIncludeArchived: false,
           startDate: undefined,
           endDate: undefined,
           status: MEMBER_STATUS.VALID,
@@ -95,10 +95,10 @@ const FilterMembersForm = memo(
           loginId,
           name,
           lnePhone,
-          transactionFrequency = null,
-          referrerLoginId,
+          transactionCount = null,
+          referrerNameOrLoginId,
           lnePersonId,
-          isActive,
+          isIncludeArchived,
           startDate,
           endDate,
           status,
@@ -108,10 +108,10 @@ const FilterMembersForm = memo(
           loginId,
           name,
           lnePhone: lnePhone ? Number(lnePhone) : undefined,
-          transactionFrequency,
-          referrerLoginId,
+          transactionCount,
+          referrerNameOrLoginId,
           lnePersonId,
-          isArchived: isActive?.toString() === 'false',
+          isIncludeArchived,
           startDate: startDate ? new Date(startDate) : undefined,
           endDate: endDate ? new Date(endDate) : undefined,
           status: status || MEMBER_STATUS.VALID,
@@ -128,9 +128,10 @@ const FilterMembersForm = memo(
       });
 
       const {
-        formState: { isValid, isDirty, isSubmitting },
+        formState: { isValid, isSubmitting },
         watch,
       } = form;
+
       const startDate = watch('startDate');
       const endDate = watch('endDate');
 
@@ -224,7 +225,7 @@ const FilterMembersForm = memo(
                   )}
                 />
                 <FormField
-                  name="transactionFrequency"
+                  name="transactionCount"
                   render={({ field }) => (
                     <FormItem className={formItemClasses}>
                       <FormControl>
@@ -245,7 +246,7 @@ const FilterMembersForm = memo(
                   )}
                 />
                 <FormField
-                  name="referrerLoginId"
+                  name="referrerNameOrLoginId"
                   render={({ field }) => (
                     <FormItem className={formItemClasses}>
                       <FormControl>
@@ -304,6 +305,7 @@ const FilterMembersForm = memo(
                         <CreatableSelect
                           {...field}
                           valueField="id"
+                          isClearable
                           isSearchable
                           label={t('lnePerson')}
                           loading={isLoadingLnePersons}
@@ -318,17 +320,17 @@ const FilterMembersForm = memo(
                   )}
                 />
                 <FormField
-                  name="isArchived"
+                  name="isIncludeArchived"
                   render={({ field }) => (
                     <FormItem className={formItemClasses}>
                       <FormControl>
                         <div className="flex flex-col gap-y-2">
-                          <p className="block h-5 text-sm font-medium text-gray-900">
+                          <p className="block h-5 text-sm font-medium text-primary-800">
                             {t('archive')}
                           </p>
                           <div className="flex h-[44px] items-center gap-x-2 [&>div>label]:whitespace-nowrap">
                             <Checkbox
-                              inputId="isArchived"
+                              inputId="isIncludeArchived"
                               label={t('archiveDescription')}
                               {...field}
                               checked={field.value}
@@ -359,24 +361,11 @@ const FilterMembersForm = memo(
                   )}
                 />
               </div>
-              <div className="flex w-full gap-x-5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={!isDirty}
-                  onClick={handleResetWithSubmit}
-                >
-                  {t('reset')}
-                </Button>
-                <Button
-                  type="submit"
-                  className="px-12"
-                  disabled={!isValid}
-                  loading={isSubmitting}
-                >
-                  {t('submit')}
-                </Button>
-              </div>
+              <SubmitBar
+                isSubmitDisabled={!isValid}
+                isLoading={isSubmitting}
+                onReset={handleResetWithSubmit}
+              />
             </Form>
           </FormProvider>
         </div>

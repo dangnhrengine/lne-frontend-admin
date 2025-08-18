@@ -94,7 +94,7 @@ export const DatePicker = memo(
 
       return (
         <div className="flex flex-col gap-y-2">
-          <Label className="h-5 text-sm font-medium text-gray-900">
+          <Label className="h-5 text-sm font-medium text-primary-800">
             {label}
           </Label>
           <div className="relative">
@@ -113,7 +113,7 @@ export const DatePicker = memo(
                 'flex h-11 w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm',
                 'placeholder:text-gray-400 focus:border-gray-300 focus:outline-none',
                 'transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50',
-                'bg-gray-100 text-gray-900',
+                'bg-gray-100 text-primary-800',
                 className
               )}
               ref={ref}

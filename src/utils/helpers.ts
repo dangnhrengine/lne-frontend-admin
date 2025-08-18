@@ -87,7 +87,7 @@ export const formatTimeFromSeconds = (seconds: number | undefined): string => {
 export const isNotEmpty = (
   data: number | string | undefined | null | boolean | string[] | Date
 ) =>
-  (data !== undefined && data !== '' && data !== null) ||
+  (data !== undefined && data !== '' && data !== null && data !== 0) ||
   (Array.isArray(data) && data.length > 0);
 
 export const convertDateToISOString = (date?: Date) => {

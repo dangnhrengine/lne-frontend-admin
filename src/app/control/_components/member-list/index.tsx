@@ -11,12 +11,12 @@ import { OrderOption } from '@/components/common/ui/TableOrdering';
 import { ROUTES } from '@/constants';
 import { Translation } from '@/hooks/useFormSchemaWithTranslation';
 import { MEMBER_STATUS } from '@/types/members';
-import { cn } from '@/utils';
+import { cn, isNotEmpty } from '@/utils';
 import { formatDatePretty } from '@/utils/date';
 import { Trash, Undo, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 interface SwitchStatusProps {
   value: boolean;
@@ -42,7 +42,7 @@ const SwitchButton = ({
       onClick={onToggle}
       disabled={disabled}
       className={cn(
-        'cursor-pointer rounded bg-white px-4 py-2 text-base font-medium text-gray-600 transition-all duration-200 ease-in-out hover:bg-gray-50 focus:outline-none',
+        'cursor-pointer rounded bg-white px-4 py-2 text-sm font-medium text-gray-800 transition-all duration-200 ease-in-out hover:bg-gray-50 focus:outline-none',
         {
           'bg-gray-900 text-white hover:bg-gray-700': isActive,
           'cursor-not-allowed': disabled,
@@ -78,19 +78,20 @@ export const MemberList = memo(
     isLoading,
     filterMemberResponse,
     filter,
-    setFilter,
+    onChangeFilters,
     handleSwitchStatus,
     handleShowArchiveModal,
   }: {
     isLoading: boolean;
     filterMemberResponse?: BaseResponseListDto<IMember>;
     filter: IFilterMembersDto;
-    setFilter: (filter: IFilterMembersDto) => void;
+    onChangeFilters: (filter: IFilterMembersDto) => void;
     handleSwitchStatus: (record: IMember, status: MEMBER_STATUS) => void;
     handleShowArchiveModal: (record: IMember) => void;
   }) => {
     const t = useTranslations('pages.members');
     const tOrdering = useTranslations('ordering');
+    const isDefaultOrderRef = useRef(true);
 
     const { data, page, totalPages, total, limit, pagingCounter } =
       filterMemberResponse || {};
@@ -110,7 +111,7 @@ export const MemberList = memo(
           width: '150px',
           sortable: false,
           render: (value: string) => (
-            <p className="text-center font-medium text-gray-900">{value}</p>
+            <p className="text-center font-medium text-primary-800">{value}</p>
           ),
         },
         {
@@ -131,7 +132,24 @@ export const MemberList = memo(
           title: t('transactionsDate'),
           width: '130px',
           className: '!whitespace-pre-line',
-          render: () => <p>-</p>,
+          render: (_, record) =>
+            isNotEmpty(record.transactionCount) &&
+            isNotEmpty(record.lastDateTransaction) ? (
+              <div className="flex flex-col items-center">
+                <p>
+                  {t('transactionCount', {
+                    count: record.transactionCount || 0,
+                  })}
+                </p>
+                <p>
+                  {formatDatePretty({
+                    value: record.lastDateTransaction || '',
+                  })}
+                </p>
+              </div>
+            ) : (
+              <p>-</p>
+            ),
         },
         {
           key: 'referrerDate',
@@ -189,7 +207,7 @@ export const MemberList = memo(
           width: '80px',
           render: (_, record) => (
             <Link href={ROUTES.EDIT_MEMBER.replace(':id', record.id)}>
-              <Button className="rounded px-6 transition-colors">
+              <Button className="h-[42px] rounded-md px-6 transition-colors">
                 {t('change')}
               </Button>
             </Link>
@@ -238,22 +256,22 @@ export const MemberList = memo(
         },
         {
           label: `${t('orderFields.transactionsNumber')}${tOrdering('asc')}`,
-          value: 'transactionFrequency',
+          value: 'transactionCount',
           orderBy: 'ASC',
         },
         {
           label: `${t('orderFields.transactionsNumber')}${tOrdering('desc')}`,
-          value: 'transactionFrequency',
+          value: 'transactionCount',
           orderBy: 'DESC',
         },
         {
           label: `${t('orderFields.transactionsDate')}${tOrdering('asc')}`,
-          value: 'transactionsDate' as keyof IMember,
+          value: 'lastDateTransaction' as keyof IMember,
           orderBy: 'ASC',
         },
         {
           label: `${t('orderFields.transactionsDate')}${tOrdering('desc')}`,
-          value: 'transactionsDate' as keyof IMember,
+          value: 'lastDateTransaction' as keyof IMember,
           orderBy: 'DESC',
         },
         {
@@ -279,30 +297,43 @@ export const MemberList = memo(
       ];
     }, [t, tOrdering]);
 
+    const orderLabel = useMemo(() => {
+      const defaultLabel = t('orderFields.default');
+      if (isDefaultOrderRef.current && sortBy === 'createdAt') {
+        return defaultLabel;
+      }
+      const currentOption = orderOptions.find(
+        (option) => option.value === sortBy
+      );
+      return currentOption?.label || defaultLabel;
+    }, [orderOptions, sortBy, isDefaultOrderRef, t]);
+
     const handlePageChange = useCallback(
       (page: number) => {
-        setFilter({
+        onChangeFilters({
           ...filter,
           currentPage: String(page),
         });
       },
-      [filter, setFilter]
+      [filter, onChangeFilters]
     );
 
     const handleOrderChange = useCallback(
       (field: keyof IMember, order: OrderBy) => {
-        setFilter({
+        isDefaultOrderRef.current = false;
+        onChangeFilters({
           ...filter,
           sortBy: field,
           orderBy: order,
         });
       },
-      [filter, setFilter]
+      [filter, onChangeFilters]
     );
 
     return (
       <div className="min-h-screen bg-gray-100 p-6">
         <TableOrdering
+          orderLabel={orderLabel}
           total={total}
           pagingCounter={pagingCounter}
           limit={limit}

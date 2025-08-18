@@ -35,7 +35,7 @@ const ButtonPagination = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex-center size-12 cursor-pointer rounded border border-gray-500 bg-white !p-0 text-gray-900 hover:bg-gray-200 disabled:!cursor-not-allowed',
+        'flex-center size-10 cursor-pointer rounded-md border border-gray-500 bg-white !p-0 text-primary-800 hover:bg-gray-200 disabled:!cursor-not-allowed',
         className
       )}
     >
@@ -88,10 +88,12 @@ export const Pagination: React.FC<PaginationProps> = ({
         {getPageNumbers().map((page) => (
           <ButtonPagination
             key={page}
+            disabled={totalPages <= 1}
             onClick={() => onChange(page)}
             className={cn('!border-none', {
-              'bg-gray-900 text-white': page === current,
-              'bg-transparent text-gray-900': page !== current,
+              'bg-primary-800 text-white': page === current,
+              'bg-transparent text-primary-800 hover:bg-gray-200':
+                page !== current,
             })}
           >
             {page}

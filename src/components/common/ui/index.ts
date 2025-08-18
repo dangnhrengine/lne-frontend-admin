@@ -36,5 +36,6 @@ export {
   ToastViewport,
 } from './Toast';
 export { Toaster } from './Toaster';
+export { SubmitBar } from './SubmitBar';
 
 export * from './types';

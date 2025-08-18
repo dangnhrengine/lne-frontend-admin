@@ -24,7 +24,7 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
         }
         return /^[0-9]+$/.test(value) && !/[.,\-]/.test(value);
       }),
-    transactionFrequency: yup
+    transactionCount: yup
       .number()
       .nullable()
       .test('numeric', translation('validation.numeric'), (value) => {
@@ -33,20 +33,9 @@ export const filterMemberFormSchema = ({ translation }: FormSchemaProps) =>
         }
         return /^[0-9]+$/.test(value) && !/[.,\-]/.test(value);
       }),
-    referrerLoginId: yup
-      .string()
-      .test(
-        'referrerLoginId',
-        translation('validation.referrerLoginId'),
-        (value) => {
-          if (!value) {
-            return true;
-          }
-          return /^L\d{6}$/.test(value);
-        }
-      ),
+    referrerNameOrLoginId: yup.string().optional(),
     lnePersonId: yup.string(),
-    isArchived: yup.boolean(),
+    isIncludeArchived: yup.boolean(),
     startDate: yup.date().optional(),
     endDate: yup.date().optional(),
     status: yup.string().oneOf(Object.values(MEMBER_STATUS)),

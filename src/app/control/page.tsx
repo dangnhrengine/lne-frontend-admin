@@ -43,6 +43,7 @@ export default function MembersPage() {
     orderBy: 'DESC',
     sortBy: 'createdAt',
     isActive: true,
+    isIncludeArchived: false,
     status: MEMBER_STATUS.VALID,
   });
 
@@ -177,22 +178,27 @@ export default function MembersPage() {
     setAlertContext({ open: false, title: '' });
   }, []);
 
+  const onChangeFilters = useCallback(
+    (newFilters: IFilterMembersDto) => {
+      setFilter(newFilters);
+      const options = pickBy({ ...newFilters }, (v) => isNotEmpty(v));
+      onChangeSearchParams(options);
+    },
+    [onChangeSearchParams, setFilter]
+  );
+
   const onSubmitFilters = useCallback(
     (formFilter: FilterMemberFormData) => {
       const newFilters = {
         ...filter,
         ...formFilter,
-        isActive: !formFilter.isArchived,
         startDate: convertDateToISOString(formFilter.startDate),
         endDate: convertDateToISOString(formFilter.endDate),
         currentPage: '1',
       } as IFilterMembersDto;
-      setFilter(newFilters);
-
-      const options = pickBy({ ...newFilters }, (v) => isNotEmpty(v));
-      onChangeSearchParams(options);
+      onChangeFilters(newFilters);
     },
-    [filter, setFilter, onChangeSearchParams]
+    [filter, onChangeFilters]
   );
 
   useEffect(() => {
@@ -206,10 +212,10 @@ export default function MembersPage() {
     <ProtectedRoute requireAuth={true}>
       <div className="p-6">
         <div className="mb-6 flex w-full items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+          <h1 className="text-2xl font-bold text-primary-800">{t('title')}</h1>
           <Button
-            size="lg"
-            className="gap-x-2 font-semibold"
+            size="md"
+            className="h-11 gap-x-2 text-sm font-semibold"
             onClick={handleExportCsv}
             loading={isExportingCsv}
             loadingText={t('exporting-csv')}
@@ -217,11 +223,11 @@ export default function MembersPage() {
             <div className="flex items-center gap-x-1">
               {t.rich('export-csv-button', {
                 small: (chunks) => (
-                  <span className="text-sm max-md:hidden">{chunks}</span>
+                  <span className="text-xs max-md:hidden">{chunks}</span>
                 ),
               })}
             </div>
-            <ArrowDownToLine />
+            <ArrowDownToLine size={20} />
           </Button>
         </div>
         <Alert {...alertContext} onClose={onCloseAlert} className="mb-6" />
@@ -236,7 +242,7 @@ export default function MembersPage() {
         isLoading={isLoadingFilter}
         filter={filter}
         filterMemberResponse={filterMemberResponse}
-        setFilter={setFilter}
+        onChangeFilters={onChangeFilters}
         handleSwitchStatus={handleSwitchStatus}
         handleShowArchiveModal={handleShowArchiveModal}
       />

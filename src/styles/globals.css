@@ -42,6 +42,6 @@
   }
 
   tr:has(td button.isArchived) {
-    @apply bg-primary-200;
+    @apply bg-primary-400 hover:bg-primary-300;
   }
 }

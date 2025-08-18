@@ -55,13 +55,13 @@ export const Table = <T,>({
     >
       <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 overflow-x-auto">
         <table className="w-full min-w-max">
-          <thead className="border-b border-gray-100 bg-primary-100">
+          <thead className="border-b border-gray-100 bg-primary-200">
             <tr>
               {columns.map((column, index) => (
                 <th
                   key={String(column.key) || index}
                   className={cn(
-                    `whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 transition-colors`,
+                    `whitespace-nowrap px-4 py-3 text-sm font-medium text-primary-800 transition-colors`,
                     {
                       'cursor-pointer select-none hover:bg-gray-100':
                         column?.sortable,
@@ -120,7 +120,7 @@ export const Table = <T,>({
                       return (
                         <td
                           key={colIndex}
-                          className={`whitespace-nowrap px-4 py-6 text-sm text-gray-900`}
+                          className={`whitespace-nowrap px-4 py-6 text-sm text-primary-800`}
                           style={{
                             minWidth: column.width || '120px',
                             textAlign: column.align || 'center',

@@ -6,11 +6,12 @@ export interface IFilterMembersDto extends IPaginationDto<IMember> {
   loginId?: string;
   name?: string;
   lnePhone?: string | null;
-  transactionFrequency?: number | null;
+  transactionCount?: number | null;
   referrerId?: string;
-  referrerLoginId?: string;
+  referrerNameOrLoginId?: string;
   lnePersonId?: string;
   status?: MEMBER_STATUS;
+  isIncludeArchived?: boolean;
 }
 
 export interface IMember extends IBase {
@@ -22,7 +23,8 @@ export interface IMember extends IBase {
   customPhone: string;
   lnePhone: string;
   dateOfBirth: Date;
-  transactionFrequency: number;
+  transactionCount?: number | null;
+  lastDateTransaction?: string | null;
   referrerId: string;
   lnePersonId: string;
   status: MEMBER_STATUS;

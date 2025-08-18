@@ -30,7 +30,10 @@ export const FormRadio: React.FC<IFormRadioProps> = ({
   return (
     <div className="space-y-2">
       {label !== '' && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-900">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-primary-800"
+        >
           {label}
         </label>
       )}
@@ -40,7 +43,7 @@ export const FormRadio: React.FC<IFormRadioProps> = ({
           return (
             <div
               key={opt.value}
-              className="inline-flex items-center gap-2 text-gray-900"
+              className="inline-flex items-center gap-2 text-primary-800"
             >
               <div className="radio-wrapper">
                 <input
@@ -59,7 +62,7 @@ export const FormRadio: React.FC<IFormRadioProps> = ({
                 />
                 <label className="radio-btn" htmlFor={inputId} />
               </div>
-              <label className="radio-btn" htmlFor={inputId}>
+              <label className="radio-btn whitespace-nowrap" htmlFor={inputId}>
                 {opt.label}
               </label>
             </div>

@@ -16,11 +16,13 @@ export interface OrderOption<T> {
 }
 
 interface TableOrderingProps<T> extends BaseResponseListDto<T> {
+  orderLabel: string;
   orderOptions: OrderOption<T>[];
   handleOrderChange: (value: keyof T, orderBy: OrderBy) => void;
 }
 
 export const TableOrdering = <T,>({
+  orderLabel,
   orderOptions,
   total,
   pagingCounter,
@@ -31,7 +33,7 @@ export const TableOrdering = <T,>({
   const t = useTranslations('ui.table');
   return (
     <div className="mb-4 flex w-full items-center justify-between">
-      <p className="text-sm text-gray-900">
+      <p className="text-sm text-primary-800">
         {t('totalItems', {
           total: total || 0,
           from: pagingCounter || 0,
@@ -42,10 +44,10 @@ export const TableOrdering = <T,>({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="flex w-[200px] items-center justify-between gap-2 rounded-md border-gray-300 max-sm:px-2"
+            className="flex h-11 min-w-[200px] items-center justify-between gap-2 rounded-md border-gray-300 font-normal text-primary-800 max-sm:px-2"
           >
-            {orderOptions[0].label}
-            <ChevronDown className="h-4 w-4" />
+            {orderLabel}
+            <ChevronDown className="size-4 text-primary-800" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -56,7 +58,7 @@ export const TableOrdering = <T,>({
             <DropdownMenuItem
               key={index}
               onClick={() => handleOrderChange(option.value, option.orderBy)}
-              className="flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700 focus:outline-none"
+              className="flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-gray-800 focus:outline-none"
             >
               {option.label}
             </DropdownMenuItem>

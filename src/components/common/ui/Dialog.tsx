@@ -68,7 +68,7 @@ export const DialogModal = ({
             >
               <div className={cn('flex items-center justify-between p-4 pt-8')}>
                 {title && (
-                  <Dialog.Title className="text-lg font-bold text-gray-900">
+                  <Dialog.Title className="text-lg font-bold text-primary-800">
                     {title}
                   </Dialog.Title>
                 )}
