@@ -35,7 +35,7 @@ export const Sidebar: React.FC = () => {
       key: 'purchaseHistory',
       href: ROUTES.PURCHASE_HISTORY,
       translationKey: 'purchaseHistory',
-      icon: <FileText className="h-5 w-5 fill-current" />,
+      icon: <FileText className="h-5 w-5" />,
     },
   ];
 
@@ -59,8 +59,8 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-64 border-r border-gray-200 bg-white">
-      <nav className="space-y-2 py-4 px-2">
+    <aside className="w-64 bg-white shadow-lg">
+      <nav className="space-y-1 py-4 px-2">
         {sidebarItems.map((item) => {
           const isActive = isActiveRoute(item.href);
 
@@ -68,13 +68,13 @@ export const Sidebar: React.FC = () => {
             <Link
               key={item.key}
               href={item.href}
-              className={`flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 rounded-md px-4 py-4 text-sm font-bold transition-colors ${
                 isActive
-                  ? 'bg-gray-200 text-black'
-                  : 'text-black hover:bg-gray-100'
+                  ? 'bg-gray-200 text-primary-800'
+                  : 'text-primary-800 hover:bg-gray-100'
               } `}
             >
-              <span className={isActive ? 'text-black' : 'text-black'}>
+              <span className={isActive ? 'text-primary-800' : 'text-primary-800'}>
                 {item.icon}
               </span>
               <span>{t(item.translationKey)}</span>
