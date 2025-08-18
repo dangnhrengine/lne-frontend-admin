@@ -38,3 +38,17 @@ export interface ISwitchMemberStatusDto {
   id: string;
   status: MEMBER_STATUS;
 }
+
+export type IMemberFormData = Pick<
+  IMember,
+  | 'name'
+  | 'email'
+  | 'gender'
+  | 'customPhone'
+  | 'lnePhone'
+  | 'dateOfBirth'
+  | 'referrerId'
+  | 'lnePersonId'
+  | 'membershipFeeRate'
+  | 'introducedFeeRate'
+>;

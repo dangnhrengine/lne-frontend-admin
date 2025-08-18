@@ -54,12 +54,14 @@ export const FormInput: React.FC<IFormInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label
-        htmlFor={id}
-        className="block h-5 text-sm font-medium text-gray-900"
-      >
-        {label}
-      </label>
+      {label !== '' && (
+        <label
+          htmlFor={id}
+          className="block h-5 text-sm font-medium text-gray-900"
+        >
+          {label}
+        </label>
+      )}
       <input
         id={id}
         {...props}

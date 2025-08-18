@@ -6,6 +6,7 @@ export const API_ENDPOINT = {
     GET_ALL: '/lne-persons',
   },
   MEMBERS: {
+    REGISTER: '/members/register',
     FILTER: '/members',
     SWITCH_STATUS: '/members/:id/switch-status',
     TOGGLE_ARCHIVE: '/members/:id/toggle-archive',

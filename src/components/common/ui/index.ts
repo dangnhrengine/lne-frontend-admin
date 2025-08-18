@@ -17,6 +17,7 @@ export { FormInput } from './FormInput';
 export { FormItem } from './FormItem';
 export { FormMessage } from './FormMessage';
 export { FormRadio } from './FormRadio';
+export { FormSelect } from './FormSelect';
 export { Hint } from './Hint';
 export { Input } from './Input';
 export { InputValidator } from './InputValidator';

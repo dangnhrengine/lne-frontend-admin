@@ -7,6 +7,7 @@ import { axiosClient, withApiErrorHandling } from '@/api/lib';
 import type {
   IFilterMembersDto,
   IMember,
+  IMemberFormData,
   ISwitchMemberStatusDto,
 } from '@/api/members/types';
 import { isNotEmpty } from '@/utils';
@@ -49,6 +50,16 @@ export const toggleArchiveMember = async (id: string) => {
     const { data } = await axiosClient.put<Promise<BaseResponseWithoutDataDto>>(
       `${API_ENDPOINT.MEMBERS.TOGGLE_ARCHIVE.replace(':id', id)}`
     );
+
+    return data;
+  });
+};
+
+export const registerMember = async (payload: IMemberFormData) => {
+  return withApiErrorHandling(async () => {
+    const { data } = await axiosClient.post<
+      Promise<BaseResponseWithoutDataDto>
+    >(API_ENDPOINT.MEMBERS.REGISTER, payload);
 
     return data;
   });

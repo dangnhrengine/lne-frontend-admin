@@ -5,6 +5,7 @@ import {
   components,
   CSSObjectWithLabel,
   GroupBase,
+  InputActionMeta,
   MenuListProps,
   MultiValue,
   OptionProps,
@@ -43,6 +44,7 @@ export interface CreatableSelectProps
   className?: string;
   isHiddenCreateNewOption?: boolean;
   valueField?: keyof Option;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   onChange: (
     option: MultiValue<Option> | Option,
     actionMeta: ActionMeta<Option>
@@ -145,6 +147,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
     disabled,
     isSearchable,
     className,
+    onInputChange,
     onChange,
     options,
     defaultValues,
@@ -222,7 +225,11 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
 
     return (
       <div className="flex flex-col gap-y-2">
-        <Label className="h-5 text-sm font-medium text-gray-900">{label}</Label>
+        {label && (
+          <Label className="h-5 text-sm font-medium text-gray-900">
+            {label}
+          </Label>
+        )}
         <ReactCreatableSelect
           {...props}
           isMulti={isMulti}
@@ -242,6 +249,7 @@ export const CreatableSelect: FC<CreatableSelectProps> = memo(
           value={currentValue}
           defaultValue={defaultValues}
           onCreateOption={onCreateOption}
+          onInputChange={onInputChange}
           onChange={(newValue, actionMeta) => onChange(newValue, actionMeta)}
           closeMenuOnSelect={closeMenuOnSelect}
           formatCreateLabel={
