@@ -3,6 +3,7 @@
 import {
   IFilterMembersDto,
   IMember,
+  useExportCsvQuery,
   useFilterMembersQuery,
   useSwitchStatusMutation,
   useToggleArchiveMutation,
@@ -69,6 +70,38 @@ export default function MembersPage() {
 
   const { data: filterMemberResponse, isLoading: isLoadingFilter } =
     useFilterMembersQuery(filter);
+
+  const { refetch: fetchCsvData, isLoading: isExportingCsv } =
+    useExportCsvQuery(filter);
+  const handleExportCsv = async () => {
+    try {
+      const { data: blob, isError, error } = await fetchCsvData();
+
+      if (isError) {
+        setAlertContext({
+          open: true,
+          title: t('export-csv-error'),
+          variant: 'error',
+        });
+        throw error;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute(
+        'download',
+        `members-${new Date().toISOString().replace(/[:.]/g, '-')}.csv`
+      );
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      logError('Failed to export CSV:', error);
+    }
+  };
 
   const { mutateAsync: switchStatus } = useSwitchStatusMutation();
   const { mutateAsync: toggleArchive, isPending: isLoadingArchive } =
@@ -174,7 +207,13 @@ export default function MembersPage() {
       <div className="p-6">
         <div className="mb-6 flex w-full items-center justify-between gap-4">
           <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-          <Button size="lg" className="gap-x-2 font-semibold">
+          <Button
+            size="lg"
+            className="gap-x-2 font-semibold"
+            onClick={handleExportCsv}
+            loading={isExportingCsv}
+            loadingText={t('exporting-csv')}
+          >
             <div className="flex items-center gap-x-1">
               {t.rich('export-csv-button', {
                 small: (chunks) => (
@@ -193,6 +232,28 @@ export default function MembersPage() {
           onSubmitFilters={onSubmitFilters}
         />
       </div>
+      <MemberList
+        isLoading={isLoadingFilter}
+        filter={filter}
+        filterMemberResponse={filterMemberResponse}
+        setFilter={setFilter}
+        handleSwitchStatus={handleSwitchStatus}
+        handleShowArchiveModal={handleShowArchiveModal}
+      />
+      {currentMember && (
+        <ToggleArchiveModal
+          title={t(`${isMemberActive ? 'archive' : 'unarchive'}-member-title`)}
+          description={t(
+            `${isMemberActive ? 'archive' : 'unarchive'}-member-description`
+          )}
+          isLoading={isLoadingArchive}
+          isOpen={!!currentMember}
+          closeOnPressEscape={false}
+          closeOnClickOutside={false}
+          onClose={handleCloseArchiveModal}
+          onSubmit={handleToggleArchive}
+        />
+      )}
       <MemberList
         isLoading={isLoadingFilter}
         filter={filter}

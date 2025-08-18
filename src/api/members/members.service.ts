@@ -9,13 +9,15 @@ import type {
   IMember,
   ISwitchMemberStatusDto,
 } from '@/api/members/types';
-import { stringifyParams } from '@/hooks';
 import { isNotEmpty } from '@/utils';
 import pickBy from 'lodash.pickby';
+import queryString from 'query-string';
 
 export const filterMembers = async (filter: IFilterMembersDto) => {
   return withApiErrorHandling(async () => {
-    const queryParams = stringifyParams(pickBy(filter, (v) => isNotEmpty(v)));
+    const queryParams = queryString.stringify(
+      pickBy(filter, (v) => isNotEmpty(v))
+    );
     const { data } = await axiosClient.get<BaseResponseListDto<IMember>>(
       `${API_ENDPOINT.MEMBERS.FILTER}?${queryParams}`
     );
@@ -46,6 +48,25 @@ export const toggleArchiveMember = async (id: string) => {
   return withApiErrorHandling(async () => {
     const { data } = await axiosClient.put<Promise<BaseResponseWithoutDataDto>>(
       `${API_ENDPOINT.MEMBERS.TOGGLE_ARCHIVE.replace(':id', id)}`
+    );
+
+    return data;
+  });
+};
+
+export const exportCsv = async (filter: IFilterMembersDto) => {
+  return withApiErrorHandling(async () => {
+    const queryParams = queryString.stringify(
+      pickBy(filter, (v) => isNotEmpty(v))
+    );
+    const { data } = await axiosClient.get(
+      `${API_ENDPOINT.MEMBERS.EXPORT_CSV}?${queryParams}`,
+      {
+        responseType: 'blob',
+        headers: {
+          Accept: 'text/csv',
+        },
+      }
     );
 
     return data;

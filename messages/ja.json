@@ -82,7 +82,9 @@
         "transactionsDate": "最終取引年月日",
         "createdAt": "入会日",
         "introducedFeeRate": "紹介料率"
-      }
+      },
+      "exporting-csv": "CSV出力中...",
+      "export-csv-error": "CSV出力に失敗しました。"
     },
     "memberRegistration": {
       "title": "会員アカウント登録",
@@ -144,7 +146,10 @@
       "yes": "はい"
     },
     "select": {
-      "noOptions": "オプションなし"
+      "noOptions": "オプションなし",
+      "error": "エラー",
+      "no": "いいえ",
+      "yes": "はい"
     }
   },
   "validation": {
