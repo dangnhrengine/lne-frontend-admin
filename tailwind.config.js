@@ -1,4 +1,23 @@
+import plugin from 'tailwindcss/plugin';
+
 /** @type {import('tailwindcss').Config} */
+
+const additionalClasses = plugin(({ addComponents }) => {
+  addComponents({
+    '.flex-center': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    '.absolute-center': {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  });
+});
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -60,7 +79,10 @@ module.exports = {
         xl: '12px',
         '2xl': '16px',
       },
+      screens: {
+        'standard': '1440px',
+      },
     },
   },
-  plugins: [],
+  plugins: [additionalClasses],
 };

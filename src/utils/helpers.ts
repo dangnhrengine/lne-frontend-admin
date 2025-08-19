@@ -83,3 +83,15 @@ export const formatTimeFromSeconds = (seconds: number | undefined): string => {
 
   return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(remainingSeconds)}`;
 };
+
+export const isNotEmpty = (
+  data: number | string | undefined | null | boolean | string[] | Date
+) =>
+  (data !== undefined && data !== '' && data !== null && data !== 0) ||
+  (Array.isArray(data) && data.length > 0);
+
+export const convertDateToISOString = (date?: Date) => {
+  return date instanceof Date ? date.toISOString() : undefined;
+};
+
+export const isEmptyObject = (data: object) => Object.keys(data).length === 0;

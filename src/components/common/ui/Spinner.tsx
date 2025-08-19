@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/utils';
 
 interface ISpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -30,15 +31,25 @@ export const Spinner: React.FC<ISpinnerProps> = ({
 };
 
 // Convenience component for full-screen loading
-export const FullScreenSpinner: React.FC<Omit<ISpinnerProps, 'className'>> = (props) => {
+export const FullScreenSpinner: React.FC<Omit<ISpinnerProps, 'className'>> = (
+  props
+) => {
   const t = useTranslations('common');
-  
+
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <Spinner 
-        {...props} 
-        text={props.text || t('loading')}
-      />
+      <Spinner {...props} text={props.text || t('loading')} />
     </div>
   );
-}; 
+};
+
+export const LoadingSpinner = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      'mx-auto size-12 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900',
+      className
+    )}
+  />
+);
+
+export default Spinner;

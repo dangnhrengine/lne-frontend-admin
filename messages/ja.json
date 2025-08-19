@@ -44,13 +44,59 @@
       "title": "会員一覧",
       "description": "会員の一覧と管理機能です。",
       "subtitle": "会員管理機能は開発中です。",
-      "placeholder": "会員一覧"
+      "placeholder": "会員一覧",
+      "export-csv-button": "<small>現在の検索結果を</small>CSV出力する",
+      "loginId": "会員ID",
+      "name": "氏名",
+      "lnePhone": "電話番号（Lne）",
+      "transactionsNumber": "取引回数",
+      "referrer": "紹介者",
+      "joiningDate": "入会日",
+      "lnePerson": "Lne担当者",
+      "archive": "アーカイブ",
+      "archiveDescription": "アーカイブ（削除）を含む",
+      "status": "ステータス",
+      "status-valid": "有効",
+      "status-invalid": "一時停止",
+      "membershipFeeRate": "会員料率",
+      "transactionsDate": "取引回数 / \n 最終取引年月日",
+      "referrerDate": "紹介者 / \n 入会日",
+      "introducedFeeRate": "紹介料率",
+      "delete": "削除",
+      "edit": "編集",
+      "lneReferrer": "Lne直販",
+      "change": "変更",
+      "status-valid-message": "「{name}のステータスを有効にしました」",
+      "status-invalid-message": "「{name}のステータスを有効にしました」",
+      "archive-member-message": "「{name}をアーカイブ（削除）しました」",
+      "unarchive-member-message": "「{name}が復元されました」",
+      "archive-member-title": "会員をアーカイブ（削除）しますか？",
+      "archive-member-description": "アーカイブすると、会員はログインできなくなります。\n元の情報は削除され、あとで管理者が復元できます。\nよろしければ「はい」を選択して、アーカイブを開始してください。",
+      "unarchive-member-title": "会員を復元しますか？",
+      "unarchive-member-description": "復元すると、会員はログイン可能できるようになります。\nよろしければ「はい」を選択して、復元を開始してください", 
+      "orderFields": {
+        "membershipFeeRate": "会員料率",
+        "transactionsNumber": "取引回数",
+        "transactionsDate": "最終取引年月日",
+        "createdAt": "入会日",
+        "introducedFeeRate": "紹介料率",
+        "default": "並べ替え"
+      },
+      "transactionCount": "{count}回",
+      "exporting-csv": "CSV出力中...",
+      "export-csv-error": "CSV出力に失敗しました。"
     },
     "memberRegistration": {
       "title": "会員アカウント登録",
       "description": "新しい会員アカウントを登録します。",
       "subtitle": "会員登録機能は開発中です。",
       "placeholder": "会員アカウント登録"
+    },
+    "memberEdit": {
+      "title": "会員アカウント編集",
+      "subtitle": "会員登録機能は開発中です。",
+      "placeholder": "会員アカウント登録",
+      "memberNotFound": "会員アカウントが見つかりません"
     },
     "purchaseHistory": {
       "title": "購入履歴",
@@ -73,7 +119,11 @@
       "next": "次へ",
       "previous": "前へ",
       "submit": "送信",
-      "close": "閉じる"
+      "close": "閉じる",
+      "register": "登録する",
+      "update": "変更する",
+      "form-reset": "リセット",
+      "form-submit": "検索する"
     },
     "form": {
       "required": "必須",
@@ -90,7 +140,8 @@
       "itemsPerPage": "件表示",
       "of": "の",
       "showing": "表示中",
-      "entries": "件"
+      "entries": "件",
+      "totalItems": "全{total}件中　{from}～{to}件"
     },
     "modal": {
       "confirm": "確認",
@@ -100,7 +151,15 @@
       "warning": "警告",
       "info": "情報",
       "success": "成功",
-      "error": "エラー"
+      "error": "エラー",
+      "no": "いいえ",
+      "yes": "はい"
+    },
+    "select": {
+      "noOptions": "オプションなし",
+      "error": "エラー",
+      "no": "いいえ",
+      "yes": "はい"
     }
   },
   "validation": {
@@ -112,7 +171,9 @@
     "confirmPassword": "パスワードが一致しません",
     "numeric": "数値を入力してください",
     "phone": "有効な電話番号を入力してください",
-    "url": "有効なURLを入力してください"
+    "url": "有効なURLを入力してください",
+    "requiredField": "この項目は必須です",
+    "referrerLoginId": "紹介者IDはL000001のような形式で入力してください"
   },
   "messages": {
     "success": {
@@ -134,5 +195,80 @@
       "logout": "ログアウトしますか？",
       "discard": "変更を破棄しますか？"
     }
+  },
+  "memberForm": {
+    "infoSectionTitle": "会員情報",
+    "introSectionTitle": "紹介情報",
+    "requiredBadge": "必須",
+    "name": {
+      "label": "氏名",
+      "max": "氏名は50文字以内で入力してください",
+      "required": "入力必須項目です"
+    },
+    "gender": {
+      "label": "性別",
+      "male": "男性",
+      "female": "女性",
+      "required": "入力必須項目です"
+    },
+    "birthdate": {
+      "label": "生年月日",
+      "year": "年",
+      "month": "月",
+      "day": "日",
+      "hint": "年プルダウン：1,900年〜2,100年",
+      "required": "入力必須項目です"
+    },
+    "email": {
+      "label": "メールアドレス",
+      "hint": "例）user@example.com",
+      "required": "入力必須項目です",
+      "invalid": "有効なメールアドレスを入力してください",
+      "maxLength": "メールアドレスは200文字以内で入力してください",
+      "conflict": "「メールアドレス」のメンバーは既に存在します。"
+    },
+    "customPhone": {
+      "label": "電話番号（顧客）",
+      "hint": "ハイフンなし、数字のみ",
+      "required": "入力必須項目です",
+      "invalid": "有効な電話番号を入力してください",
+      "max": "最大13桁の数字で入力してください"
+    },
+    "lnePhone": {
+      "label": "電話番号（Lne）",
+      "hint": "ハイフンなし、数字のみ",
+      "required": "入力必須項目です",
+      "invalid": "有効な電話番号を入力してください",
+      "max": "最大13桁の数字で入力してください"
+    },
+    "membershipFeeRate": {
+      "label": "会員料率",
+      "hint": "数字のみ、小数点第2位まで",
+      "required": "入力必須項目です",
+      "invalid": "0〜100の整数で入力してください"
+    },
+    "referrerId": {
+      "label": "紹介者",
+      "default": "Lne本部",
+      "hint": "会員ID、または会員氏名を入力するとサジェストが表示されます",
+      "required": "入力必須項目です",
+      "notFound": "「紹介者」が見つかりませんでした"
+    },
+    "lnePersonId": {
+      "label": "Lne担当",
+      "hint": "ブランド内の担当者から選択します",
+      "required": "入力必須項目です",
+      "notFound": "「Lne担当」が見つかりませんでした"
+    },
+    "introducedFeeRate": {
+      "label": "紹介料率",
+      "hint": "数字のみ、小数点第2位まで",
+      "required": "入力必須項目です",
+      "invalid": "0〜100の整数で入力してください"
+    }
+  },
+  "ordering": {
+    "asc": "昇順",
+    "desc": "降順"
   }
 }

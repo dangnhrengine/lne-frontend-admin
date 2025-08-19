@@ -1,0 +1,56 @@
+import type { IBase, IPaginationDto } from '@/api/common/types';
+import { ILnePersonsResponseDto } from '@/api/lne-persons/types';
+import { MEMBER_STATUS } from '@/types/members';
+
+export interface IFilterMembersDto extends IPaginationDto<IMember> {
+  loginId?: string;
+  name?: string;
+  lnePhone?: string | null;
+  transactionCount?: number | null;
+  referrerId?: string;
+  referrerNameOrLoginId?: string;
+  lnePersonId?: string;
+  status?: MEMBER_STATUS;
+  isIncludeArchived?: boolean;
+}
+
+export interface IMember extends IBase {
+  id: string;
+  loginId: string;
+  name: string;
+  email: string;
+  gender: 'male' | 'female';
+  customPhone: string;
+  lnePhone: string;
+  dateOfBirth: Date;
+  transactionCount?: number | null;
+  lastDateTransaction?: string | null;
+  referrerId: string;
+  lnePersonId: string;
+  status: MEMBER_STATUS;
+  membershipFeeRate: number;
+  introducedFeeRate: number;
+  lnePerson: ILnePersonsResponseDto;
+  isActive: boolean;
+  referrer?: IMember;
+  createdByAdminId?: string;
+}
+
+export interface ISwitchMemberStatusDto {
+  id: string;
+  status: MEMBER_STATUS;
+}
+
+export type IMemberFormData = Pick<
+  IMember,
+  | 'name'
+  | 'email'
+  | 'gender'
+  | 'customPhone'
+  | 'lnePhone'
+  | 'dateOfBirth'
+  | 'referrerId'
+  | 'lnePersonId'
+  | 'membershipFeeRate'
+  | 'introducedFeeRate'
+>;
